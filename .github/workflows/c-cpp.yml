@@ -2,9 +2,9 @@ name: C/C++ ARM CI
 
 on:
   push:
-    branches: ["main", "dev-all", "github_action_test"]
+    branches: ["master", "dev", "test"]
   pull_request:
-    branches: ["main"]
+    branches: ["master"]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
