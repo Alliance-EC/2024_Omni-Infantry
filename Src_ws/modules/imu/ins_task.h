@@ -8,8 +8,8 @@
 
 // 设置陀螺仪数据相较于云台的yaw,pitch,roll的方向
 #define BMI088_BOARD_INSTALL_SPIN_MATRIX \
-    {0.0f, -1.0f, 0.0f},                 \
-        {1.0f, 0.0f, 0.0f},              \
+    {-1.0f, 0.0f, 0.0f},                 \
+        {0.0f, -1.0f, 0.0f},             \
     {                                    \
         0.0f, 0.0f, 1.0f                 \
     }
