@@ -124,6 +124,7 @@ void CalcOffsetAngle()
 
 void PitchAngleLimit()
 {
+    float current = cmd_media_param.pitch_control;
     float limit_min, limit_max;
 #if PITCH_INS_FEED_TYPE
     limit_min = PITCH_LIMIT_ANGLE_DOWN * DEGREE_2_RAD;
@@ -139,11 +140,13 @@ void PitchAngleLimit()
     if (current < limit_min)
         current = limit_min;
 #else
-    if (cmd_media_param.pitch_control < limit_max)
-        cmd_media_param.pitch_control = limit_max;
-    if (cmd_media_param.pitch_control > limit_min)
-        cmd_media_param.pitch_control = limit_min;
+    if (current < limit_max)
+        current = limit_max;
+    if (current > limit_min)
+        current = limit_min;
 #endif
+
+    cmd_media_param.pitch_control = current;
 }
 
 void GimbalModeSwitch()
@@ -176,7 +179,7 @@ void GimbalModeSwitch()
 void ShootControl()
 {
     shoot_cmd_send.shoot_mode = SHOOT_ON;
-    shoot_cmd_send.shoot_rate = 30; // 射频默认30Hz
+    shoot_cmd_send.shoot_rate = 30;
 
     shoot_cmd_send.loader_rate = shoot_cmd_send.shoot_rate *
                                  360 * REDUCTION_RATIO_LOADER / NUM_PER_CIRCLE;
@@ -223,12 +226,17 @@ static void emergencyhandler()
  */
 static void remotecontrolset()
 {
+    chassis_mode_e last_chassis_mode_;
+    shoot_mode_e last_shoot_mode_;
+
     (rc_data[TEMP].rc.dial > 400)
         ? (chassis_cmd_send.SuperCap_flag_from_user = SUPER_USER_OPEN)
         : (chassis_cmd_send.SuperCap_flag_from_user = SUPER_USER_CLOSE);
 
     switch (rc_data[TEMP].rc.switch_right) {
         case RC_SW_MID:
+            // last_chassis_mode_ = CHASSIS_NO_FOLLOW;
+
             if (cmd_media_param.rc_mode[CHASSIS_FREE] == 1) {
                 chassis_cmd_send.chassis_mode = CHASSIS_NO_FOLLOW;
             }
@@ -240,6 +248,7 @@ static void remotecontrolset()
 
             if (chassis_cmd_send.chassis_mode == CHASSIS_ROTATE) {
                 cmd_media_param.rc_mode[CHASSIS_ROTATION] = 0;
+                chassis_cmd_send.reverse_flag             = rc_data[TEMP].rc.dial < -400 ? 1 : -1;
             }
 
             if (chassis_cmd_send.chassis_mode == CHASSIS_FOLLOW_GIMBAL_YAW) {
@@ -253,12 +262,13 @@ static void remotecontrolset()
                     chassis_cmd_send.chassis_mode = CHASSIS_NO_FOLLOW;
                     break;
                 case 1:
+                    chassis_cmd_send.chassis_mode = CHASSIS_ROTATE;
                     chassis_cmd_send.wz           = 5000;
-                    chassis_cmd_send.reverse_flag = rc_data[TEMP].rc.dial < -400 ? 1 : -1;
                     break;
             }
             break;
         case RC_SW_UP:
+
             cmd_media_param.rc_mode[CHASSIS_FREE] = 0;
             switch (cmd_media_param.rc_mode[CHASSIS_FOLLOW]) {
                 case 0:

@@ -78,7 +78,7 @@ void ChassisDeviceInit()
 
     chassis_motor_config.can_init_config.tx_id                             = 4;
     chassis_motor_config.controller_setting_init_config.motor_reverse_flag = MOTOR_DIRECTION_NORMAL;
-    motors[joint_rb]                                                       = DJIMotorInit(&chassis_motor_config);
+    motors[joint_lb]                                                       = DJIMotorInit(&chassis_motor_config);
 
     SuperCap_Init_Config_s cap_conf = {
         .can_config = {
@@ -149,13 +149,13 @@ void ChassisModeSet()
             break;
         case CHASSIS_FOLLOW_GIMBAL_YAW:
             float offset_angle;
-            if (chassis_cmd_recv.gimbal_error_angle <= PI / 2 && chassis_cmd_recv.gimbal_error_angle >= -PI / 2) // 0附近
+            if (chassis_cmd_recv.gimbal_error_angle <= 90 && chassis_cmd_recv.gimbal_error_angle >= -90) // 0附近
                 offset_angle = chassis_cmd_recv.gimbal_error_angle;
             else {
-                offset_angle = chassis_cmd_recv.gimbal_error_angle >= 0 ? chassis_cmd_recv.gimbal_error_angle - PI
-                                                                        : chassis_cmd_recv.gimbal_error_angle + PI;
+                offset_angle = chassis_cmd_recv.gimbal_error_angle >= 0 ? chassis_cmd_recv.gimbal_error_angle - 180
+                                                                        : chassis_cmd_recv.gimbal_error_angle + 180;
             }
-            chassis_cmd_recv.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, pow(offset_angle, 2.0), 0);
+            chassis_cmd_recv.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
             break;
         case CHASSIS_ROTATE:
             chassis_cmd_recv.wz *= -1 * chassis_cmd_recv.reverse_flag;

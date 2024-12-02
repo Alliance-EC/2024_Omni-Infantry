@@ -221,10 +221,6 @@ void DJIMotorSetRef(DJIMotorInstance *motor, float ref)
     motor->motor_controller.pid_ref = ref;
 }
 
-void djichassisoutputzoom()
-{
-}
-
 // 为所有电机实例计算三环PID,发送控制报文
 void DJIMotorControl()
 {
@@ -282,8 +278,8 @@ void DJIMotorControl()
         if (motor_setting->feedback_reverse_flag == FEEDBACK_DIRECTION_REVERSE)
             pid_ref *= -1;
 
-        if (motor->sender_group == 1)
-            pid_ref *= motor_controller->set_zoom_coef;
+        // if (motor->sender_group == 1)
+        //     pid_ref *= motor_controller->set_zoom_coef;
 
         // 获取最终输出
         set = (int16_t)pid_ref;

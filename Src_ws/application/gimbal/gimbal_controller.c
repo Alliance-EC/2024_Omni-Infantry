@@ -68,8 +68,8 @@ void GimbalDeviceInit()
         },
         .controller_param_init_config = {
             .angle_PID = {
-                .Kp            = 100.0,
-                .Ki            = 0.0,
+                .Kp            = 220.0,
+                .Ki            = 3.7,
                 .Kd            = 3.50,
                 .DeadBand      = 0.0f,
                 .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement,
@@ -77,7 +77,7 @@ void GimbalDeviceInit()
                 .MaxOut        = 100,
             },
             .speed_PID = {
-                .Kp            = 2000.0,
+                .Kp            = 850.0,
                 .Ki            = 0,
                 .Kd            = 0,
                 .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement | PID_OutputFilter,
@@ -103,15 +103,15 @@ void GimbalDeviceInit()
         },
         .controller_param_init_config = {
             .angle_PID = {
-                .Kp            = 200,
-                .Ki            = 10,
-                .Kd            = 3,
+                .Kp            = 230.0,
+                .Ki            = 2.0,
+                .Kd            = 5.0,
                 .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement,
                 .IntegralLimit = 10,
                 .MaxOut        = 20,
             },
             .speed_PID = {
-                .Kp            = 1500,
+                .Kp            = 2400,
                 .Ki            = 0,
                 .Kd            = 0,
                 .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement | PID_OutputFilter,
@@ -126,7 +126,7 @@ void GimbalDeviceInit()
             .speed_feedback_source = OTHER_FEED,
             .outer_loop_type       = ANGLE_LOOP,
             .close_loop_type       = SPEED_LOOP | ANGLE_LOOP,
-            .motor_reverse_flag    = MOTOR_DIRECTION_NORMAL,
+            .motor_reverse_flag    = MOTOR_DIRECTION_REVERSE,
         },
         .motor_type = GM6020,
     };

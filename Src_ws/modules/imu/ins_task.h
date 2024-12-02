@@ -1,10 +1,7 @@
 #ifndef __INS_TASK_H
 #define __INS_TASK_H
 
-#include "stdint.h"
 #include "bmi088.h"
-#include "cmsis_os.h"
-#include "user_lib.h"
 
 // 设置陀螺仪数据相较于云台的yaw,pitch,roll的方向
 #define BMI088_BOARD_INSTALL_SPIN_MATRIX \
