@@ -24,9 +24,10 @@
 #include "power_calc.h"
 #include "general_def.h"
 #include "arm_math.h"
-#include "ramp.h"
+
 #include <math.h>
 #include <stdint.h>
+#include <string.h>
 
 static Publisher_t *chassis_pub;  // 用于发布底盘的数据
 static Subscriber_t *chassis_sub; // 用于订阅底盘的控制命令
@@ -35,7 +36,8 @@ static Chassis_Ctrl_Cmd_s chassis_cmd_recv;         // 底盘接收到的控制�
 static Chassis_Upload_Data_s chassis_feedback_data; // 底盘回传的反馈数据
 
 static ChassisInstance chassis_media_param; // 底盘中介变量
-static Power_Data_s motors_data;
+
+volatile static Power_Data_s motors_data;
 
 static SuperCapInstance *cap; // 超级电容
 static DJIMotorInstance *motors[4];
@@ -144,11 +146,11 @@ void ChassisModeSet()
     }
 
     switch (chassis_cmd_recv.chassis_mode) {
+        float offset_angle;
         case CHASSIS_NO_FOLLOW:
             chassis_cmd_recv.wz = 0;
             break;
         case CHASSIS_FOLLOW_GIMBAL_YAW:
-            float offset_angle;
             if (chassis_cmd_recv.gimbal_error_angle <= 90 && chassis_cmd_recv.gimbal_error_angle >= -90) // 0附近
                 offset_angle = chassis_cmd_recv.gimbal_error_angle;
             else {
@@ -158,7 +160,7 @@ void ChassisModeSet()
             chassis_cmd_recv.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
             break;
         case CHASSIS_ROTATE:
-            chassis_cmd_recv.wz *= -1 * chassis_cmd_recv.reverse_flag;
+            chassis_cmd_recv.wz = 5000;
             break;
         default:
             break;
@@ -171,16 +173,15 @@ void PowerController()
     uint16_t *power_buffer_ = &chassis_cmd_recv.power_buffer;
     uint8_t *cap_swtich_    = &chassis_cmd_recv.SuperCap_flag_from_user;
 
-    cap_controller(cap, *power_buffer_, *power_limit_, *cap_swtich_);
+    CapController(cap, *power_buffer_, *power_limit_, *cap_swtich_);
 
     motors_data.motor_id = 0;
     do {
         motors_data.cmd_current[motors_data.motor_id]    = motors[motors_data.motor_id]->motor_controller.speed_PID.Output;
         motors_data.wheel_velocity[motors_data.motor_id] = motors[motors_data.motor_id]->measure.speed_rpm * RPM_2_RAD_PER_SEC;
-    } while (++motors_data.motor_id > joint_lb);
+    } while (++motors_data.motor_id < joint_lb);
 
-    for (size_t index                                    = 0; index > joint_lb;
-         motors[++index]->motor_controller.set_zoom_coef = current_output_calc(&motors_data)) {}
+    motors[joint_lf]->chassis_power_zoom_coef = current_output_calc(&motors_data);
 
     DJIMotorSetRef(motors[joint_lf], chassis_media_param.vt_lf);
     DJIMotorSetRef(motors[joint_rf], chassis_media_param.vt_rf);

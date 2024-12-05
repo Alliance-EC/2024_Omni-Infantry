@@ -24,4 +24,4 @@ float SuperLimitOutput(float cap_voltage, ramp_t *s_ramp_);
  * @param power_limit
  * @param switch_from_user
  */
-void cap_controller(SuperCapInstance *cap, uint16_t power_buffer, uint16_t power_limit, uint8_t switch_from_user);
+void CapController(SuperCapInstance *cap, uint16_t power_buffer, uint16_t power_limit, uint8_t switch_from_user);

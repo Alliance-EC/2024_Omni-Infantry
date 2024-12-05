@@ -122,33 +122,6 @@ void CalcOffsetAngle()
     chassis_cmd_send.gimbal_error_angle = offset_angle + gimbal_error_angle;
 }
 
-void PitchAngleLimit()
-{
-    float current = cmd_media_param.pitch_control;
-    float limit_min, limit_max;
-#if PITCH_INS_FEED_TYPE
-    limit_min = PITCH_LIMIT_ANGLE_DOWN * DEGREE_2_RAD;
-    limit_max = PITCH_LIMIT_ANGLE_UP * DEGREE_2_RAD;
-#else
-    limit_min = PITCH_LIMIT_ANGLE_DOWN;
-    limit_max = PITCH_LIMIT_ANGLE_UP;
-#endif
-
-#if PITCH_ECD_UP_ADD // 云台抬升,反馈值增
-    if (current > limit_max)
-        current = limit_max;
-    if (current < limit_min)
-        current = limit_min;
-#else
-    if (current < limit_max)
-        current = limit_max;
-    if (current > limit_min)
-        current = limit_min;
-#endif
-
-    cmd_media_param.pitch_control = current;
-}
-
 void GimbalModeSwitch()
 {
     gimbal_cmd_send.gimbal_mode = GIMBAL_GYRO_MODE;
@@ -174,6 +147,35 @@ void GimbalModeSwitch()
     } else if (cmd_media_param.yaw_control - gimbal_fetch_data.gimbal_imu_data->output.INS_angle[INS_YAW_ADDRESS_OFFSET] <= -PI) {
         cmd_media_param.yaw_control += PI2;
     }
+}
+
+void PitchAngleLimit()
+{
+    uint16_t pitch_current_ecd = gimbal_fetch_data.pitch_ecd;
+
+    float current = cmd_media_param.pitch_control;
+    float limit_min, limit_max;
+#if PITCH_INS_FEED_TYPE
+    limit_min = PITCH_LIMIT_ANGLE_DOWN * DEGREE_2_RAD;
+    limit_max = PITCH_LIMIT_ANGLE_UP * DEGREE_2_RAD;
+#else
+    limit_min = PITCH_LIMIT_ANGLE_DOWN;
+    limit_max = PITCH_LIMIT_ANGLE_UP;
+#endif
+
+#if PITCH_ECD_UP_ADD // 云台抬升,反馈值增
+    if (current > limit_max)
+        current = limit_max;
+    if (current < limit_min)
+        current = limit_min;
+#else
+    if (current < limit_max)
+        current = limit_max;
+    if (current > limit_min)
+        current = limit_min;
+#endif
+
+    cmd_media_param.pitch_control = current;
 }
 
 void ShootControl()
@@ -226,8 +228,6 @@ static void emergencyhandler()
  */
 static void remotecontrolset()
 {
-    chassis_mode_e last_chassis_mode_;
-    shoot_mode_e last_shoot_mode_;
 
     (rc_data[TEMP].rc.dial > 400)
         ? (chassis_cmd_send.SuperCap_flag_from_user = SUPER_USER_OPEN)
@@ -235,8 +235,6 @@ static void remotecontrolset()
 
     switch (rc_data[TEMP].rc.switch_right) {
         case RC_SW_MID:
-            // last_chassis_mode_ = CHASSIS_NO_FOLLOW;
-
             if (cmd_media_param.rc_mode[CHASSIS_FREE] == 1) {
                 chassis_cmd_send.chassis_mode = CHASSIS_NO_FOLLOW;
             }
@@ -263,12 +261,10 @@ static void remotecontrolset()
                     break;
                 case 1:
                     chassis_cmd_send.chassis_mode = CHASSIS_ROTATE;
-                    chassis_cmd_send.wz           = 5000;
                     break;
             }
             break;
         case RC_SW_UP:
-
             cmd_media_param.rc_mode[CHASSIS_FREE] = 0;
             switch (cmd_media_param.rc_mode[CHASSIS_FOLLOW]) {
                 case 0:

@@ -19,6 +19,8 @@ typedef struct {
 
     float zoom_coef;
 
+    float real_power;
+
     // 更新值
     uint16_t max_power;
 
@@ -38,4 +40,4 @@ void power_calc_params_init(float reduction_ratio_init, bool output_direction_in
 
 void max_power_update(uint16_t max_power_init);
 
-float current_output_calc(Power_Data_s *motors_data);
+float current_output_calc(volatile Power_Data_s *motors_data);

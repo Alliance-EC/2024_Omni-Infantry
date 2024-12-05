@@ -1,5 +1,6 @@
 #pragma once
 
+#include "robot_def.h"
 #include "dji_motor.h"
 #include "ramp.h"
 #include <stdint.h>

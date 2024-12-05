@@ -114,81 +114,44 @@ void ShootParamInit()
 
 void loader_status_update(void)
 {
-
+    static float load_starting_count_ = 0;
+    static float load_jaming_count_   = 0;
+    static float load_rollback_count_ = 0;
     // 获取拨弹盘转速
     shoot_media_param.loader_velocity = loader->measure.speed_aps * NUM_PER_CIRCLE /
-                                        REDUCTION_RATIO_LOADER / 360;
+                                        REDUCTION_RATIO_LOADER / 360.0;
 
-#if LOADER_2006
     switch (shoot_media_param.loader_status) {
-        case LOADER_IDLE:
-            // if (expression) {
-            // }
-            break;
-        case LOADER_NORMAL:
-            break;
-        case LOADER_JAM:
-            break;
-        case LOADER_ROLLBACK:
-            break;
-        default:
-            shoot_media_param.loader_status = LOADER_IDLE;
-            break;
-    }
-#else
-    static uint8_t loader_normal_count;        // 正常工作计时
-    static uint8_t loader_jam_count = 50;      // 卡弹计时
-    static uint8_t loader_reverse_count;       // 反转计时
-    static uint8_t loader_weakjam_count;       // 轻微卡弹计时
-    static uint8_t loader_startjam_count = 50; // 启动卡弹计时
-    switch (shoot_media_param.loader_status) {
-        case LOADER_IDLE:
-            loader_normal_count  = 0;
-            loader_weakjam_count = 0;
-            loader_jam_count     = 0;
-            loader_reverse_count = 0;
+        case LOADER_START:
+            load_rollback_count_ = 0;
+            if (shoot_media_param.loader_velocity >= 20)
+                load_starting_count_++;
+            else if (abs(shoot_media_param.loader_current) > 8000)
+                load_jaming_count_++;
 
-            if (shoot_media_param.loader_velocity > 20) {
-                shoot_media_param.loader_status = LOADER_NORMAL;
+            if (load_starting_count_ >= 500) {
+                shoot_media_param.loader_status = LOADER_IDLE;
+                load_starting_count_            = 0;
             }
-            break;
-        case LOADER_NORMAL:
-            loader_normal_count++;
-            if (loader_normal_count > 40) {
-                if (shoot_media_param.loader_current > 6000) {
-                    shoot_media_param.loader_status = LOADER_JAM;
-                } else if (abs(shoot_media_param.loader_current) < 200) {
-                    shoot_media_param.loader_status = LOADER_IDLE;
-                }
-            }
-            break;
-        case LOADER_JAM:
-            shoot_cmd_recv.load_mode = LOAD_JAM;
-
-            if (shoot_media_param.loader_current < 8000) {
-                loader_weakjam_count++;
-                if (loader_weakjam_count > 100)
-                    shoot_media_param.loader_status = LOADER_IDLE;
-            } else {
-                loader_jam_count--;
-            }
-            if (loader_jam_count == 0) {
+            if (load_jaming_count_ >= 500) {
                 shoot_media_param.loader_status = LOADER_ROLLBACK;
+                load_jaming_count_              = 0;
             }
+            break;
+        case LOADER_IDLE:
+            if (shoot_media_param.loader_velocity <= 10 && shoot_media_param.loader_current > 8000)
+                shoot_media_param.loader_status = LOADER_ROLLBACK;
             break;
         case LOADER_ROLLBACK:
             shoot_cmd_recv.load_mode = LOAD_REVERSE;
-            loader_reverse_count++;
-            // 反转时间
-            if (loader_reverse_count > 100) {
-                shoot_media_param.loader_status = LOADER_IDLE;
+            if (load_rollback_count_++ > 200) {
+                shoot_media_param.loader_status = LOADER_START;
             }
             break;
         default:
-            shoot_media_param.loader_status = LOADER_IDLE;
+            shoot_media_param.loader_status = LOADER_START;
             break;
     }
-#endif
 }
 
 void ShootModeSet()
@@ -207,9 +170,6 @@ void ShootModeSet()
             break;
     }
 
-    if (shoot_media_param.hibernate_time + shoot_media_param.dead_time > DWT_GetTimeline_ms())
-        return;
-
     switch (shoot_cmd_recv.load_mode) {
         // 停止拨盘
         case LOAD_STOP:
@@ -220,8 +180,6 @@ void ShootModeSet()
             break;
         // 激活能量机关
         case LOAD_1_BULLET:
-            shoot_media_param.hibernate_time      = DWT_GetTimeline_ms();
-            shoot_media_param.dead_time           = 150;
             shoot_media_param.shoot_heat_count[1] = shoot_media_param.shoot_count;
             if (shoot_media_param.shoot_heat_count[1] - shoot_media_param.shoot_heat_count[0] >= 1) {
                 shoot_media_param.one_bullet = 1;
@@ -243,7 +201,7 @@ void ShootModeSet()
             DJIMotorSetRef(loader, shoot_cmd_recv.loader_rate / 3);
             break;
         case LOAD_REVERSE:
-            DJIMotorSetRef(loader, -shoot_cmd_recv.loader_rate / 3);
+            DJIMotorSetRef(loader, -shoot_cmd_recv.loader_rate / 2);
             break;
         default:
             while (1);

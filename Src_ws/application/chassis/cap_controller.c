@@ -47,7 +47,7 @@ static void SuperLimitOutput(float cap_voltage, ramp_t *s_ramp_)
  */
 uint8_t Super_Voltage_Allow_Flag;
 
-void cap_controller(SuperCapInstance *cap, uint16_t power_buffer, uint16_t power_limit, uint8_t switch_from_user)
+void CapController(SuperCapInstance *cap, uint16_t power_buffer, uint16_t power_limit, uint8_t switch_from_user)
 {
     SuperCap_State_e SuperCap_state = SUPER_STATE_LOW;
     // 状态机逻辑,滞回
