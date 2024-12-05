@@ -67,9 +67,10 @@
 // 底盘模式设置
 typedef enum {
     CHASSIS_ZERO_FORCE = 0,    // 电流零输入
-    CHASSIS_ROTATE,            // 小陀螺模式
     CHASSIS_NO_FOLLOW,         // 不跟随，允许全向平移
     CHASSIS_FOLLOW_GIMBAL_YAW, // 跟随模式，底盘叠加角度环控制
+    CHASSIS_ROTATE,            // 小陀螺模式
+    CHASSIS_REVERSE
 } chassis_mode_e;
 
 typedef enum {
@@ -94,11 +95,12 @@ typedef enum {
 } friction_mode_e;
 
 typedef enum {
-    LOAD_STOP = 0, // 停止发射
-    LOAD_REVERSE,  // 反转
-    LOAD_1_BULLET, // 单发
-    LOAD_JAM,
+    LOAD_STOP = 0,  // 停止发射
+    LOAD_1_BULLET,  // 单发
     LOAD_BURSTFIRE, // 连发
+    LOAD_REVERSE,   // 反转
+    LOAD_JAM,
+
 } loader_mode_e;
 
 /* ----------------CMD应用发布的控制数据,应当由gimbal/chassis/shoot/UI订阅---------------- */
@@ -120,8 +122,7 @@ typedef struct
     float vy; // 横移方向控制量
     float wz; // 旋转速度
 
-    int8_t reverse_flag; // 小陀螺反转
-
+    int8_t reverse_rotate_mode_;
     // float chassis_cmd_velocity_vector; // 底盘速度控制矢量 单位:m/s
 
     float gimbal_error_angle;

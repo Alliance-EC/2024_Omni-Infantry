@@ -158,7 +158,9 @@ void ChassisModeSet()
             chassis_cmd_recv.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
             break;
         case CHASSIS_ROTATE:
-            chassis_cmd_recv.wz *= -1 * chassis_cmd_recv.reverse_flag;
+            break;
+        case CHASSIS_REVERSE:
+            chassis_cmd_recv.wz *= -1;
             break;
         default:
             break;

@@ -36,8 +36,6 @@ typedef struct {
     /*控制值*/
     uint8_t ui_refresh_flag; // UI发送标志位
 
-    uint8_t rc_mode[5];
-
     uint8_t auto_aim;
     uint8_t auto_rune; // 自瞄打符标志位
     float rec_yaw, rec_pitch;

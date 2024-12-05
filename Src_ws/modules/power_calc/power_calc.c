@@ -9,9 +9,7 @@
  *
  */
 #include "power_calc.h"
-#include "stdlib.h"
 
-#include <stdlib.h>
 #include <math.h>
 
 static PowerCalcInstance powercalcinstance;
