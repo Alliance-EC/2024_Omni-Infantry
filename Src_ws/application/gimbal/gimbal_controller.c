@@ -150,10 +150,12 @@ void GimbalModeSet()
             break;
         // 使用陀螺仪的反馈,底盘根据yaw电机的offset跟随云台或视觉模式采用
         case GIMBAL_GYRO_MODE:
-            DJIMotorEnable(yaw_motor);
-            DJIMotorEnable(pitch_motor);
-            DJIMotorSetRef(yaw_motor, gimbal_cmd_recv.yaw);
-            DJIMotorSetRef(pitch_motor, gimbal_cmd_recv.pitch);
+            DJIMotorStop(yaw_motor);
+            DJIMotorStop(pitch_motor);
+            // DJIMotorEnable(yaw_motor);
+            // DJIMotorEnable(pitch_motor);
+            // DJIMotorSetRef(yaw_motor, gimbal_cmd_recv.yaw);
+            // DJIMotorSetRef(pitch_motor, gimbal_cmd_recv.pitch);
             break;
         default:
             break;

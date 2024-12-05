@@ -163,9 +163,12 @@ void ShootModeSet()
             DJIMotorStop(loader);
             break;
         case SHOOT_ON:
-            DJIMotorEnable(friction_l);
-            DJIMotorEnable(friction_r);
-            DJIMotorEnable(loader);
+            DJIMotorStop(friction_l);
+            DJIMotorStop(friction_r);
+            DJIMotorStop(loader);
+            // DJIMotorEnable(friction_l);
+            // DJIMotorEnable(friction_r);
+            // DJIMotorEnable(loader);
 
             break;
     }

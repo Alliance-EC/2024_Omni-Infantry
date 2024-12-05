@@ -201,17 +201,17 @@ static void emergencyhandler()
 
 static void remotecontrolset()
 {
-    chassis_mode_e last_chassis_mode_ = CHASSIS_ZERO_FORCE;
-    friction_mode_e last_fric_mode_   = FRICTION_OFF;
-    loader_mode_e last_load_mode_     = LOAD_STOP;
+    static chassis_mode_e last_chassis_mode_ = CHASSIS_ZERO_FORCE;
+    static friction_mode_e last_fric_mode_   = FRICTION_OFF;
+    static loader_mode_e last_load_mode_     = LOAD_STOP;
 
     switch (rc_data[TEMP].rc.switch_right) {
         case RC_SW_MID:
             last_chassis_mode_ = chassis_cmd_send.chassis_mode;
             break;
         case RC_SW_DOWN:
-            chassis_cmd_send.chassis_mode = (last_chassis_mode_ = CHASSIS_NO_FOLLOW) ? (last_chassis_mode_ = CHASSIS_ROTATE) ? CHASSIS_REVERSE
-                                                                                                                             : CHASSIS_ROTATE
+            chassis_cmd_send.chassis_mode = (last_chassis_mode_ = CHASSIS_NO_FOLLOW) ? ((last_chassis_mode_ = CHASSIS_ROTATE) ? CHASSIS_REVERSE
+                                                                                                                              : CHASSIS_ROTATE)
                                                                                      : CHASSIS_NO_FOLLOW;
             break;
         case RC_SW_UP:

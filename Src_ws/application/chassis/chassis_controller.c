@@ -139,10 +139,14 @@ void ChassisModeSet()
         DJIMotorStop(motors[joint_lb]);
         DJIMotorStop(motors[joint_rb]);
     } else {
-        DJIMotorEnable(motors[joint_lf]);
-        DJIMotorEnable(motors[joint_rf]);
-        DJIMotorEnable(motors[joint_lb]);
-        DJIMotorEnable(motors[joint_rb]);
+        DJIMotorStop(motors[joint_lf]);
+        DJIMotorStop(motors[joint_rf]);
+        DJIMotorStop(motors[joint_lb]);
+        DJIMotorStop(motors[joint_rb]);
+        // DJIMotorEnable(motors[joint_lf]);
+        // DJIMotorEnable(motors[joint_rf]);
+        // DJIMotorEnable(motors[joint_lb]);
+        // DJIMotorEnable(motors[joint_rb]);
     }
 
     switch (chassis_cmd_recv.chassis_mode) {
