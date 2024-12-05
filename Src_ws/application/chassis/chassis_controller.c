@@ -125,10 +125,10 @@ void OmniCalculate()
     chassis_media_param.chassis_vx = chassis_cmd_recv.vx * chassis_media_param.cos_theta - chassis_cmd_recv.vy * chassis_media_param.sin_theta;
     chassis_media_param.chassis_vy = chassis_cmd_recv.vx * chassis_media_param.sin_theta + chassis_cmd_recv.vy * chassis_media_param.cos_theta;
 
-    chassis_media_param.vt_lf = chassis_media_param.chassis_vx + chassis_media_param.chassis_vy + chassis_cmd_recv.wz * LF_CENTER;
-    chassis_media_param.vt_rf = chassis_media_param.chassis_vx - chassis_media_param.chassis_vy + chassis_cmd_recv.wz * RF_CENTER;
-    chassis_media_param.vt_rb = -chassis_media_param.chassis_vx - chassis_media_param.chassis_vy + chassis_cmd_recv.wz * RB_CENTER;
-    chassis_media_param.vt_lb = -chassis_media_param.chassis_vx + chassis_media_param.chassis_vy + chassis_cmd_recv.wz * LB_CENTER;
+    chassis_media_param.vt_lf = chassis_media_param.chassis_vx + chassis_media_param.chassis_vy + chassis_media_param.wz * LF_CENTER;
+    chassis_media_param.vt_rf = chassis_media_param.chassis_vx - chassis_media_param.chassis_vy + chassis_media_param.wz * RF_CENTER;
+    chassis_media_param.vt_rb = -chassis_media_param.chassis_vx - chassis_media_param.chassis_vy + chassis_media_param.wz * RB_CENTER;
+    chassis_media_param.vt_lb = -chassis_media_param.chassis_vx + chassis_media_param.chassis_vy + chassis_media_param.wz * LB_CENTER;
 }
 
 void ChassisModeSet()
@@ -150,9 +150,9 @@ void ChassisModeSet()
     }
 
     switch (chassis_cmd_recv.chassis_mode) {
-        float offset_angle;
+        float offset_angle = 0;
         case CHASSIS_NO_FOLLOW:
-            chassis_cmd_recv.wz = 0;
+            chassis_media_param.wz = 0;
             break;
         case CHASSIS_FOLLOW_GIMBAL_YAW:
             if (chassis_cmd_recv.gimbal_error_angle <= 90 && chassis_cmd_recv.gimbal_error_angle >= -90) // 0附近
@@ -161,10 +161,10 @@ void ChassisModeSet()
                 offset_angle = chassis_cmd_recv.gimbal_error_angle >= 0 ? chassis_cmd_recv.gimbal_error_angle - 180
                                                                         : chassis_cmd_recv.gimbal_error_angle + 180;
             }
-            chassis_cmd_recv.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
+            chassis_media_param.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
             break;
         case CHASSIS_ROTATE:
-            chassis_cmd_recv.wz = 5000;
+            chassis_media_param.wz = 5000;
             break;
         default:
             break;

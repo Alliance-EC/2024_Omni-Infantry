@@ -22,9 +22,7 @@
 
 从目前的RoboMaster开源社区来看，大部分队伍都没有一套规则统一，符合较大规模软件开发原则的框架，有些学校连不同兵种代码都相去甚远，甚至连队伍用于传承的代码注释都寥寥无几，全靠师傅带徒弟言传身教。跃鹿框架作为一套模块化设计的优秀电控框架代码，被用于进行Alliance2024电控组的开发框架。
 
-
-
-## 跃鹿框架设计思想
+### 跃鹿框架设计思想
 
 1. ***框架的设计模式***
 
@@ -42,13 +40,17 @@
 
 ---
 
-## 全向轮底盘解算
+## 使用说明
 
-<img src="D:\alliance\electric control\2024_Omni-Infantry\.assets\output.png" style="zoom: 33%;" />
+### dt7-dr16遥控系统
+
+### 键鼠
+
+## 全向轮底盘解算
 
 > 顺时针轮子序号：1，2，3，4 
 
-### 参数定义
+#### 参数定义
 
 底盘坐标系——底盘自身坐标系
 
@@ -74,9 +76,9 @@ $\theta$——底盘坐标系与绝对坐标系的角度误差
 
 坐标系采用右手系：
 
-<img src="D:\alliance\electric control\2024_Omni-Infantry\.assets\ML-4.png" style="zoom:67%;" />
 
-### 逆运动学解算
+
+#### 逆运动学解算
 
 规定当机器人底盘正方向为y轴正方向。即底盘朝向北时，x轴正方向为东。
 
@@ -87,7 +89,7 @@ $$
 \vec{v}=\vec{v_x}+\vec{v_y}+\vec{w_z}*R
 $$
 
-#### 底盘坐标系与绝对坐标系重合：
+##### 底盘坐标系与绝对坐标系重合：
 
 $$
 v_1=v_x+v_y+w_z*R\\
@@ -96,17 +98,19 @@ v_3=-v_x+-v_y+w_z*R\\
 v_4=-v_x+v_y+w_z*R\\
 $$
 
-#### 底盘坐标系与绝对坐标系有角度误差：
+##### 底盘坐标系与绝对坐标系存在角度误差：
 
 以逆时针为正方向：
 $$
 v_x=v_{xcmd}*cos\theta-v_{ycmd}*sin\theta\\
 v_y=v_{xcmd}*sin\theta+v_{ycmd}*cos\theta
 $$
-代入原方程组：
+代入原方程组得四轮速度：
 $$
 v_1=v_{xcmd}*cos\theta-v_{ycmd}*sin\theta+v_y+w_z*R\\
 v_2=v_{xcmd}*cos\theta-v_{ycmd}*sin\theta+-v_y+w_z*R\\
 v_3=-v_{xcmd}*cos\theta-v_{ycmd}*sin\theta+-v_y+w_z*R\\
 v_4=-v_{xcmd}*cos\theta-v_{ycmd}*sin\theta+v_y+w_z*R\\
 $$
+
+### 

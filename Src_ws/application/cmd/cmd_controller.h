@@ -5,7 +5,6 @@
 #include "ramp.h"
 
 #define RC_LOST         (rc_data[TEMP].rc.switch_left == 0 && rc_data[TEMP].rc.switch_right == 0)
-
 #define MOUSEKEYCONTROL switch_is_up(rc_data[TEMP].rc.switch_left) && (switch_is_down(rc_data[TEMP].rc.switch_right))
 #define ENTIREDISABLE   (switch_is_down(rc_data[TEMP].rc.switch_left) && switch_is_down(rc_data[TEMP].rc.switch_right))
 // 底盘模式
@@ -28,6 +27,10 @@ typedef struct {
     float heat_coef;
     ramp_t fb_ramp;
     ramp_t lr_ramp;
+
+    chassis_mode_e last_chassis_mode_;
+    friction_mode_e last_fric_mode_;
+    loader_mode_e last_load_mode_;
 } CmdInstance;
 
 /* 初始化 */

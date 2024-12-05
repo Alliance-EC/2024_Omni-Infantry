@@ -72,6 +72,10 @@ void CmdParamInit()
 
     cmd_media_param.ui_refresh_flag = 1;
     cmd_media_param.auto_rune       = 0;
+
+    cmd_media_param.last_chassis_mode_ = CHASSIS_ZERO_FORCE;
+    cmd_media_param.last_fric_mode_    = FRICTION_OFF;
+    cmd_media_param.last_load_mode_    = LOAD_STOP;
 }
 
 void CmdMsgInit()
@@ -196,26 +200,27 @@ static void emergencyhandler()
     shoot_cmd_send.load_mode                 = LOAD_STOP;
     shoot_cmd_send.shoot_mode                = SHOOT_OFF;
 
+    cmd_media_param.last_chassis_mode_ = CHASSIS_ZERO_FORCE;
+    cmd_media_param.last_fric_mode_    = FRICTION_OFF;
+    cmd_media_param.last_load_mode_    = LOAD_STOP;
+
     LOGERROR("[CMD] emergency stop!");
 }
 
 static void remotecontrolset()
 {
-    static chassis_mode_e last_chassis_mode_ = CHASSIS_ZERO_FORCE;
-    static friction_mode_e last_fric_mode_   = FRICTION_OFF;
-    static loader_mode_e last_load_mode_     = LOAD_STOP;
 
     switch (rc_data[TEMP].rc.switch_right) {
         case RC_SW_MID:
-            last_chassis_mode_ = chassis_cmd_send.chassis_mode;
+            cmd_media_param.last_chassis_mode_ = chassis_cmd_send.chassis_mode;
             break;
         case RC_SW_DOWN:
-            chassis_cmd_send.chassis_mode = (last_chassis_mode_ = CHASSIS_NO_FOLLOW) ? ((last_chassis_mode_ = CHASSIS_ROTATE) ? CHASSIS_REVERSE
-                                                                                                                              : CHASSIS_ROTATE)
-                                                                                     : CHASSIS_NO_FOLLOW;
+            chassis_cmd_send.chassis_mode = (cmd_media_param.last_chassis_mode_ == CHASSIS_NO_FOLLOW) ? ((cmd_media_param.last_chassis_mode_ == CHASSIS_ROTATE) ? CHASSIS_REVERSE
+                                                                                                                                                                : CHASSIS_ROTATE)
+                                                                                                      : CHASSIS_NO_FOLLOW;
             break;
         case RC_SW_UP:
-            chassis_cmd_send.chassis_mode = (last_chassis_mode_ = CHASSIS_NO_FOLLOW) ? CHASSIS_FOLLOW_GIMBAL_YAW : CHASSIS_NO_FOLLOW;
+            chassis_cmd_send.chassis_mode = (cmd_media_param.last_chassis_mode_ == CHASSIS_NO_FOLLOW) ? CHASSIS_FOLLOW_GIMBAL_YAW : CHASSIS_NO_FOLLOW;
             break;
         default:
             break;
@@ -223,17 +228,15 @@ static void remotecontrolset()
 
     switch (rc_data[TEMP].rc.switch_left) {
         case RC_SW_MID:
-            last_fric_mode_ = shoot_cmd_send.friction_mode;
-            last_load_mode_ = shoot_cmd_send.load_mode;
+            cmd_media_param.last_fric_mode_ = shoot_cmd_send.friction_mode;
+            cmd_media_param.last_load_mode_ = shoot_cmd_send.load_mode;
             break;
         case RC_SW_UP:
-            shoot_cmd_send.friction_mode = (last_fric_mode_ = FRICTION_OFF) ? FRICTION_ON : FRICTION_OFF;
+            shoot_cmd_send.friction_mode = (cmd_media_param.last_fric_mode_ == FRICTION_OFF) ? FRICTION_ON : FRICTION_OFF;
             break;
         case RC_SW_DOWN:
-            if (shoot_cmd_send.friction_mode == FRICTION_ON) {
-                shoot_cmd_send.load_mode = (last_load_mode_ == LOAD_BURSTFIRE) ? LOAD_STOP : last_load_mode_ + 1;
-            }
-
+            if (shoot_cmd_send.friction_mode == FRICTION_ON)
+                shoot_cmd_send.load_mode = (cmd_media_param.last_load_mode_ == LOAD_BURSTFIRE) ? LOAD_STOP : cmd_media_param.last_load_mode_ + 1;
         default:
             break;
     }
@@ -241,11 +244,8 @@ static void remotecontrolset()
     // 底盘参数
     chassis_cmd_send.vx = 20000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r_; // 水平方向
     chassis_cmd_send.vy = 20000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r1; // 竖直方向
-    chassis_cmd_send.wz = 5000;
 
-    (rc_data[TEMP].rc.dial > 400)
-        ? (chassis_cmd_send.SuperCap_flag_from_user = SUPER_USER_OPEN)
-        : (chassis_cmd_send.SuperCap_flag_from_user = SUPER_USER_CLOSE);
+    chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].rc.dial > 400 ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
 
     // 云台参数
     gimbal_cmd_send.yaw   = cmd_media_param.yaw_control;
@@ -260,7 +260,6 @@ static void remotecontrolset()
 static void chassisset()
 {
     chassis_cmd_send.chassis_mode = CHASSIS_FOLLOW_GIMBAL_YAW;
-    chassis_cmd_send.wz           = 5000;
 
     static float current_speed_x = 0;
     static float current_speed_y = 0;

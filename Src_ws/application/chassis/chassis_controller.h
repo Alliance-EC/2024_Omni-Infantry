@@ -13,6 +13,8 @@ typedef struct {
     uint8_t center_gimbal_offset_x; // 云台旋转中心距底盘几何中心的距离
     uint8_t center_gimbal_offset_y;
 
+    float wz;
+
     /* 私有函数计算的中介变量,设为静态避免参数传递的开销 */
     float chassis_vx, chassis_vy, chassis_vw; // 将云台系的速度投影到底盘
     float vt_lf, vt_rf, vt_lb, vt_rb;         // 底盘速度解算后的临时输出,待进行限幅

@@ -118,7 +118,6 @@ typedef struct
 
     float vx; // 前进方向控制量
     float vy; // 横移方向控制量
-    float wz; // 旋转速度
 
     int8_t reverse_rotate_mode_;
     // float chassis_cmd_velocity_vector; // 底盘速度控制矢量 单位:m/s
