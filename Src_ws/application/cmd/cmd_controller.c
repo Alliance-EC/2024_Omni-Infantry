@@ -145,8 +145,8 @@ void GimbalModeSwitch()
     }
 
     float current    = cmd_media_param.pitch_control;
-    float limit_down = 25;
-    float limit_up   = -16;
+    float limit_down = 25.0 * DEGREE_2_RAD;
+    float limit_up   = -16.0 * DEGREE_2_RAD;
 
     if (current > limit_down)
         current = limit_down;
