@@ -103,15 +103,15 @@ void GimbalDeviceInit()
         },
         .controller_param_init_config = {
             .angle_PID = {
-                .Kp            = 230.0,
-                .Ki            = 2.0,
-                .Kd            = 5.0,
+                .Kp            = 220.0,
+                .Ki            = 1.3,
+                .Kd            = 2.50,
                 .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement,
                 .IntegralLimit = 10,
                 .MaxOut        = 20,
             },
             .speed_PID = {
-                .Kp            = 2400,
+                .Kp            = 3000,
                 .Ki            = 0,
                 .Kd            = 0,
                 .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement | PID_OutputFilter,
@@ -168,6 +168,7 @@ void GimbalMsgComm()
     // 设置反馈数据,主要是imu和yaw的ecd
     gimbal_feedback_data.gimbal_imu_data              = gimbal_IMU_data;
     gimbal_feedback_data.yaw_motor_single_round_angle = (uint16_t)yaw_motor->measure.angle_single_round; // 推送消息
+    gimbal_feedback_data.pitch_ecd                    = pitch_motor->measure.ecd;
 
     // 推送消息
     PubPushMessage(gimbal_pub, (void *)&gimbal_feedback_data);

@@ -232,14 +232,16 @@ void DJIMotorControl()
     Motor_Controller_s *motor_controller;   // 电机控制器
     DJI_Motor_Measure_s *measure;           // 电机测量值
     float pid_measure, pid_ref;             // 电机PID测量值和设定值
+    float chassis_power_zoom_coef;
 
     // 遍历所有电机实例,进行串级PID的计算并设置发送报文的值
     for (size_t i = 0; i < idx; ++i) { // 减小访存开销,先保存指针引用
-        motor            = dji_motor_instance[i];
-        motor_setting    = &motor->motor_settings;
-        motor_controller = &motor->motor_controller;
-        measure          = &motor->measure;
-        pid_ref          = motor_controller->pid_ref; // 保存设定值,防止motor_controller->pid_ref在计算过程中被修改
+        motor                   = dji_motor_instance[i];
+        motor_setting           = &motor->motor_settings;
+        motor_controller        = &motor->motor_controller;
+        measure                 = &motor->measure;
+        pid_ref                 = motor_controller->pid_ref; // 保存设定值,防止motor_controller->pid_ref在计算过程中被修改
+        chassis_power_zoom_coef = dji_motor_instance[0]->chassis_power_zoom_coef;
 
         // pid_ref会顺次通过被启用的闭环充当数据的载体
         // 计算位置环,只有启用位置环且外层闭环为位置时会计算速度环输出
@@ -279,7 +281,7 @@ void DJIMotorControl()
             pid_ref *= -1;
 
         // if (motor->sender_group == 1)
-        //     pid_ref *= motor_controller->set_zoom_coef;
+        //     pid_ref *= chassis_power_zoom_coef;
 
         // 获取最终输出
         set = (int16_t)pid_ref;

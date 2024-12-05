@@ -23,7 +23,6 @@ void RobotCMDTask()
     DeterminRobotID();
     GimbalModeSwitch();
     CalcOffsetAngle();
-    PitchAngleLimit();
     ShootControl();
     CmdModeSet();
     CmdMsgComm();

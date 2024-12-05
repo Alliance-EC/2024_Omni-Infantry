@@ -22,8 +22,6 @@
 // bsp
 #include "bsp_log.h"
 #include <math.h>
-#include <stdint.h>
-#include <string.h>
 
 static Publisher_t *chassis_cmd_pub;             // 底盘控制消息发布者
 static Subscriber_t *chassis_feed_sub;           // 底盘反馈信息订阅者
@@ -120,33 +118,6 @@ void CalcOffsetAngle()
     chassis_cmd_send.gimbal_error_angle = offset_angle + gimbal_error_angle;
 }
 
-void PitchAngleLimit()
-{
-    float current = cmd_media_param.pitch_control;
-    float limit_min, limit_max;
-#if PITCH_INS_FEED_TYPE
-    limit_min = PITCH_LIMIT_ANGLE_DOWN * DEGREE_2_RAD;
-    limit_max = PITCH_LIMIT_ANGLE_UP * DEGREE_2_RAD;
-#else
-    limit_min = PITCH_LIMIT_ANGLE_DOWN;
-    limit_max = PITCH_LIMIT_ANGLE_UP;
-#endif
-
-#if PITCH_ECD_UP_ADD
-    if (current > limit_max)
-        current = limit_max;
-    if (current < limit_min)
-        current = limit_min;
-#else
-    if (current < limit_max)
-        current = limit_max;
-    if (current > limit_min)
-        current = limit_min;
-#endif
-
-    cmd_media_param.pitch_control = current;
-}
-
 void GimbalModeSwitch()
 {
     gimbal_cmd_send.gimbal_mode = GIMBAL_GYRO_MODE;
@@ -172,6 +143,17 @@ void GimbalModeSwitch()
     } else if (cmd_media_param.yaw_control - gimbal_fetch_data.gimbal_imu_data->output.INS_angle[INS_YAW_ADDRESS_OFFSET] <= -PI) {
         cmd_media_param.yaw_control += PI2;
     }
+
+    float current    = cmd_media_param.pitch_control;
+    float limit_down = 25;
+    float limit_up   = -16;
+
+    if (current > limit_down)
+        current = limit_down;
+    if (current < limit_up)
+        current = limit_up;
+
+    cmd_media_param.pitch_control = current;
 }
 
 void ShootControl()

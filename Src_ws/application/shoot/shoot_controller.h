@@ -12,15 +12,13 @@
 
 /* 拨弹盘工作状态 */
 typedef enum {
-    LOADER_IDLE = 0,
-    LOADER_NORMAL,
+    LOADER_START = 0,
+    LOADER_IDLE,
     LOADER_JAM,
     LOADER_ROLLBACK,
 } loader_status_e;
 
 typedef struct {
-    // dwt定时,计算冷却用
-    float hibernate_time, dead_time;
 
     int heat_control;     // 热量控制
     float local_heat;     // 本地热量
@@ -58,13 +56,11 @@ void ShootMsgInit();
 void ShootParamInit();
 
 /**
- * @brief 拨弹盘堵转检测
- * @details 获取拨弹盘转速。
- * 根据转速判断拨弹盘工作状态：静止，正常工作，转动时突然卡弹，卡弹根本转不动。
- * 判断方式：电机转速与目标值对比
- * 拨弹盘回退：1-2颗弹丸
+ * @brief 堵转检测
+ *
  */
-void loader_status_update(void);
+void loader_status_update();
+
 /**
  * @brief 发射状态切换
  *
