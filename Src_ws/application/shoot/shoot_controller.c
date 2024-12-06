@@ -14,7 +14,6 @@
 
 #include "dji_motor.h"
 #include "message_center.h"
-#include "bsp_dwt.h"
 #include "ramp.h"
 #include <stdint.h>
 
@@ -163,12 +162,10 @@ void ShootModeSet()
             DJIMotorStop(loader);
             break;
         case SHOOT_ON:
-            DJIMotorStop(friction_l);
-            DJIMotorStop(friction_r);
-            DJIMotorStop(loader);
-            // DJIMotorEnable(friction_l);
-            // DJIMotorEnable(friction_r);
-            // DJIMotorEnable(loader);
+
+            DJIMotorEnable(friction_l);
+            DJIMotorEnable(friction_r);
+            DJIMotorEnable(loader);
 
             break;
     }

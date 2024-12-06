@@ -1,7 +1,6 @@
 #pragma once
 
 #include "robot_def.h"
-#include "dji_motor.h"
 #include "ramp.h"
 
 #define RC_LOST         (rc_data[TEMP].rc.switch_left == 0 && rc_data[TEMP].rc.switch_right == 0)

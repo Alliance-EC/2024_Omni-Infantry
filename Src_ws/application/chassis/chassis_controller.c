@@ -139,18 +139,15 @@ void ChassisModeSet()
         DJIMotorStop(motors[joint_lb]);
         DJIMotorStop(motors[joint_rb]);
     } else {
-        DJIMotorStop(motors[joint_lf]);
-        DJIMotorStop(motors[joint_rf]);
-        DJIMotorStop(motors[joint_lb]);
-        DJIMotorStop(motors[joint_rb]);
-        // DJIMotorEnable(motors[joint_lf]);
-        // DJIMotorEnable(motors[joint_rf]);
-        // DJIMotorEnable(motors[joint_lb]);
-        // DJIMotorEnable(motors[joint_rb]);
+        DJIMotorEnable(motors[joint_lf]);
+        DJIMotorEnable(motors[joint_rf]);
+        DJIMotorEnable(motors[joint_lb]);
+        DJIMotorEnable(motors[joint_rb]);
     }
 
+    float offset_angle = 0;
+
     switch (chassis_cmd_recv.chassis_mode) {
-        float offset_angle = 0;
         case CHASSIS_NO_FOLLOW:
             chassis_media_param.wz = 0;
             break;
@@ -166,6 +163,8 @@ void ChassisModeSet()
         case CHASSIS_ROTATE:
             chassis_media_param.wz = 5000;
             break;
+        case CHASSIS_REVERSE:
+            chassis_media_param.wz = -5000;
         default:
             break;
     }

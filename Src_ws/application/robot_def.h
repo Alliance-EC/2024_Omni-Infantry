@@ -14,6 +14,7 @@
 
 #include "ins_task.h"
 #include "rm_referee.h"
+#include "dji_motor.h"
 #include <stdint.h>
 
 #define VISION_USE_VCP // 使用虚拟串口发送视觉数据

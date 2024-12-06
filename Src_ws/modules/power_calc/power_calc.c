@@ -55,8 +55,11 @@ float current_output_calc(volatile Power_Data_s *motors_data)
     }
 
     powercalcinstance.real_power = a + b + c;
-    powercalcinstance.zoom_coef  = a + b + c < powercalcinstance.max_power ? 1.0 : (b * b - 4 * a * c) > 0 ? (-b + sqrtf(b * b - 4 * a * c)) / (2 * a)
-                                                                                                           : 0.;
+
+    c -= powercalcinstance.max_power;
+
+    powercalcinstance.zoom_coef = powercalcinstance.real_power < powercalcinstance.max_power ? 1.0 : (b * b - 4 * a * c) > 0 ? (-b + sqrtf(b * b - 4 * a * c)) / (2 * a)
+                                                                                                                             : 0.;
     return powercalcinstance.zoom_coef;
     // return limit_output(&powercalcinstance.zoom_coef, 0.0, 1.0);
 }
