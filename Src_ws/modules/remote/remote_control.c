@@ -1,9 +1,11 @@
 #include "remote_control.h"
+#include "stm32f4xx_hal_uart.h"
 #include "string.h"
 #include "bsp_usart.h"
 #include "stdlib.h"
 #include "daemon.h"
 #include "bsp_log.h"
+#include "usart.h"
 
 #define REMOTE_CONTROL_FRAME_SIZE 18u // 遥控器接收的buffer大小
 

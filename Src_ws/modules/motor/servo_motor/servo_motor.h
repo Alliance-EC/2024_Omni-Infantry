@@ -19,19 +19,17 @@
 #define SERVO_MOTOR_CNT 7
 
 /*各种舵机类型*/
-typedef enum
-{
+typedef enum {
     Servo180 = 0,
     Servo270 = 1,
     Servo360 = 2,
 } Servo_Type_e;
 
 /*舵机模式选择*/
-typedef enum
-{
-    Free_Angle_mode, // 任意角度模式
-    Start_mode,      // 起始角度模式
-    Final_mode,      // 终止角度模式
+typedef enum {
+    free_mode, // 任意角度模式
+    init_mode, // 起始角度模式
+    end_mode,  // 终止角度模式
 } Servo_Angle_Type_e;
 /*角度设置*/
 typedef struct
@@ -85,6 +83,7 @@ typedef struct
 
 ServoInstance *ServoInit(Servo_Init_Config_s *Servo_Init_Config);
 void Servo_Motor_FreeAngle_Set(ServoInstance *Servo_Motor, int16_t S_angle);
-void Servo_Motor_Type_Select(ServoInstance *Servo_Motor,int16_t mode);
+void servo_init_end_angle_set(ServoInstance *Servo_Motor, int16_t Start_angle, int16_t Final_angle);
+void Servo_Motor_Type_Select(ServoInstance *Servo_Motor, int16_t mode);
 void ServeoMotorControl();
 #endif // SERVO_MOTOR_H

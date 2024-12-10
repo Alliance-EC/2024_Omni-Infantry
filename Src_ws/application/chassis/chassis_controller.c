@@ -39,7 +39,7 @@ static ChassisInstance chassis_media_param; // 底盘中介变量
 
 volatile static Power_Data_s motors_data;
 
-static SuperCapInstance *cap; // 超级电容
+static SuperCapInstance *cap;
 static DJIMotorInstance *motors[4];
 
 // left right forward back
@@ -85,10 +85,10 @@ void ChassisDeviceInit()
     SuperCap_Init_Config_s cap_conf = {
         .can_config = {
             .can_handle = &hcan1,
-            .tx_id      = 0X427, // 超级电容默认接收id
-            .rx_id      = 0x300, // 超级电容默认发送id,注意tx和rx在其他人看来是反的
+            .tx_id      = 0X427,
+            .rx_id      = 0x300,
         }};
-    cap = SuperCapInit(&cap_conf); // 超级电容初始化
+    cap = SuperCapInit(&cap_conf);
 }
 
 void ChassisParamInit()
@@ -104,11 +104,11 @@ void ChassisParamInit()
     };
 
     PIDInit(&chassis_media_param.chassis_follow_cotroller, &follow_pid);
-    // 为了方便调试加入的量
-    chassis_media_param.center_gimbal_offset_x = CENTER_GIMBAL_OFFSET_X; // 云台旋转中心距底盘几何中心的距离,左右方向,云台位于正中心时默认设为0
-    chassis_media_param.center_gimbal_offset_y = CENTER_GIMBAL_OFFSET_Y; // 云台旋转中心距底盘几何中心的距离,前后方向,云台位于正中心时默认设为0
 
-    power_calc_params_init(REDUCTION_RATIO_WHEEL, MOTOR_OUTPUT_DIRECTION); // 功率计算参数初始化
+    chassis_media_param.center_gimbal_offset_x = CENTER_GIMBAL_OFFSET_X;
+    chassis_media_param.center_gimbal_offset_y = CENTER_GIMBAL_OFFSET_Y;
+
+    power_calc_params_init(REDUCTION_RATIO_WHEEL, MOTOR_OUTPUT_DIRECTION);
 }
 
 void ChassisMsgInit()
@@ -194,13 +194,10 @@ void PowerController()
 
 void ChassisMsgComm()
 {
-    // 获取新的控制信息
     SubGetMessage(chassis_sub, &chassis_cmd_recv);
 
-    // 给电容传输数据
     SuperCapSend(cap, (uint8_t *)&cap->cap_msg_g);
 
-    // 推送反馈消息
     memcpy(&chassis_feedback_data.CapFlag_open_from_real, &cap->cap_msg_s.SuperCap_open_flag_from_real, sizeof(uint8_t));
     memcpy(&chassis_feedback_data.cap_voltage, &cap->cap_msg_s.CapVot, sizeof(float));
 

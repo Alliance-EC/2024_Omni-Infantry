@@ -12,13 +12,11 @@
 #include "shoot_controller.h"
 #include "robot_def.h"
 
+#include "servo_motor.h"
 #include "dji_motor.h"
 #include "message_center.h"
 #include "ramp.h"
 #include <stdint.h>
-
-/* 对于双发射机构的机器人,将下面的数据封装成结构体即可,生成两份shoot应用实例 */
-static DJIMotorInstance *friction_l, *friction_r, *loader; // 拨盘电机
 
 static Publisher_t *shoot_pub;
 static Subscriber_t *shoot_sub;
@@ -26,11 +24,13 @@ static Subscriber_t *shoot_sub;
 static Shoot_Ctrl_Cmd_s shoot_cmd_recv;         // 来自cmd的发射控制信息
 static Shoot_Upload_Data_s shoot_feedback_data; // 来自cmd的发射控制信息
 
+static DJIMotorInstance *friction_l, *friction_r, *loader;
+static ServoInstance *bullet_bay_cover; // 弹舱盖舵机
+
 static ShootInstance shoot_media_param; // 发射中介变量
 
 void ShootDeviceInit()
 {
-    // 左摩擦轮
     Motor_Init_Config_s friction_config = {
         .can_init_config = {
             .can_handle = &hcan2,
@@ -54,16 +54,15 @@ void ShootDeviceInit()
             .motor_reverse_flag = MOTOR_DIRECTION_REVERSE,
         },
         .motor_type = M3508};
-    friction_config.can_init_config.tx_id                             = 3; // 左摩擦轮,改txid和方向就行
+    friction_config.can_init_config.tx_id                             = 3;
     friction_config.controller_setting_init_config.motor_reverse_flag = MOTOR_DIRECTION_NORMAL;
 
     friction_l = DJIMotorInit(&friction_config);
 
-    friction_config.can_init_config.tx_id                             = 4; // 右摩擦轮,改txid和方向就行
+    friction_config.can_init_config.tx_id                             = 4;
     friction_config.controller_setting_init_config.motor_reverse_flag = MOTOR_DIRECTION_REVERSE;
     friction_r                                                        = DJIMotorInit(&friction_config);
 
-    // 拨盘电机
     Motor_Init_Config_s loader_config = {
         .can_init_config = {
             .can_handle = &hcan2,
@@ -71,8 +70,8 @@ void ShootDeviceInit()
         },
         .controller_param_init_config = {
             .speed_PID = {
-                .Kp            = 1, // 10
-                .Ki            = 0, // 1
+                .Kp            = 1,
+                .Ki            = 0,
                 .Kd            = 0,
                 .Improve       = PID_Integral_Limit,
                 .IntegralLimit = 5000,
@@ -80,18 +79,26 @@ void ShootDeviceInit()
             },
         },
         .controller_setting_init_config = {
-            .angle_feedback_source = MOTOR_FEED, .speed_feedback_source = MOTOR_FEED,
-            .outer_loop_type    = SPEED_LOOP, // 初始化成SPEED_LOOP,让拨盘停在原地,防止拨盘上电时乱转
-            .close_loop_type    = SPEED_LOOP,
-            .motor_reverse_flag = MOTOR_DIRECTION_NORMAL, // 注意方向设置为拨盘的拨出的击发方向
+            .angle_feedback_source = MOTOR_FEED,
+            .speed_feedback_source = MOTOR_FEED,
+            .outer_loop_type       = SPEED_LOOP,
+            .close_loop_type       = SPEED_LOOP,
+            .motor_reverse_flag    = MOTOR_DIRECTION_NORMAL,
         },
-        .motor_type = M2006 // 英雄使用m3508
-    };
+        .motor_type = M2006};
     loader = DJIMotorInit(&loader_config);
 
     DJIMotorStop(friction_l);
     DJIMotorStop(friction_r);
     DJIMotorStop(loader);
+
+    Servo_Init_Config_s servo_config_init = {
+        .htim             = &htim1,
+        .Channel          = TIM_CHANNEL_1,
+        .Servo_Angle_Type = init_mode,
+        .Servo_type       = Servo270,
+    };
+    bullet_bay_cover = ServoInit(&servo_config_init);
 }
 
 void ShootMsgInit()
@@ -102,6 +109,10 @@ void ShootMsgInit()
 
 void ShootParamInit()
 {
+    int16_t Init_angle  = 0;
+    int16_t Final_angle = 90;
+    servo_init_end_angle_set(bullet_bay_cover, Init_angle, Final_angle);
+
     shoot_media_param.heat_control    = 25; // 热量控制
     shoot_media_param.local_heat      = 0;  // 本地热量
     shoot_media_param.One_bullet_heat = 10; // 打一发消耗热量
@@ -162,10 +173,20 @@ void ShootModeSet()
             DJIMotorStop(loader);
             break;
         case SHOOT_ON:
-
             DJIMotorEnable(friction_l);
             DJIMotorEnable(friction_r);
             DJIMotorEnable(loader);
+
+            break;
+    }
+    Servo_Motor_Type_Select(bullet_bay_cover, free_mode);
+    switch (shoot_cmd_recv.bay_mode) {
+        case BAY_CLOSE:
+            Servo_Motor_Type_Select(bullet_bay_cover, init_mode);
+
+            break;
+        case BAY_OPEN:
+            Servo_Motor_Type_Select(bullet_bay_cover, end_mode);
 
             break;
     }

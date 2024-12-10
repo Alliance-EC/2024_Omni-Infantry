@@ -54,8 +54,8 @@ static CmdInstance cmd_media_param;  // 控制中介变量
 
 void CmdDeviceInit()
 {
-    rc_data      = RemoteControlInit(&huart3);   // 修改为对应串口,注意如果是自研板dbus协议串口需选用添加了反相器的那个
-    referee_data = RefereeHardwareInit(&huart6); // 裁判系统初始化,会同时初始化UI
+    rc_data      = RemoteControlInit(&huart3);
+    referee_data = RefereeHardwareInit(&huart6);
 }
 
 void CmdParamInit()
@@ -65,7 +65,7 @@ void CmdParamInit()
 #else
     gimbal_cmd_send.pitch = PTICH_HORIZON_ANGLE;
 #endif
-    shoot_cmd_send.shoot_mode = SHOOT_OFF; // 初始化后发射机构失能
+    shoot_cmd_send.shoot_mode = SHOOT_OFF;
 
     ramp_init(&cmd_media_param.fb_ramp, RAMP_TIME);
     ramp_init(&cmd_media_param.lr_ramp, RAMP_TIME);
@@ -96,26 +96,22 @@ void DeterminRobotID()
 {
     // id小于7是红色,大于7是蓝色,0为红色，1为蓝色   #define Robot_Red 0    #define Robot_Blue 1
     referee_data->referee_id.Robot_Color       = referee_data->GameRobotState.robot_id > 7 ? Robot_Blue : Robot_Red;
-    referee_data->referee_id.Cilent_ID         = 0x0100 + referee_data->GameRobotState.robot_id; // 计算客户端ID
-    referee_data->referee_id.Robot_ID          = referee_data->GameRobotState.robot_id;          // 计算机器人ID
+    referee_data->referee_id.Cilent_ID         = 0x0100 + referee_data->GameRobotState.robot_id;
+    referee_data->referee_id.Robot_ID          = referee_data->GameRobotState.robot_id;
     referee_data->referee_id.Receiver_Robot_ID = 0;
 }
 
 void CalcOffsetAngle()
 {
-    // 从云台获取的当前yaw电机单圈角度
-    float angle = gimbal_fetch_data.yaw_motor_single_round_angle;
-    // 云台yaw轴当前角度
+    float angle                    = gimbal_fetch_data.yaw_motor_single_round_angle;
     float gimbal_yaw_current_angle = gimbal_fetch_data.gimbal_imu_data->output.INS_angle[INS_YAW_ADDRESS_OFFSET];
-    // 云台yaw轴目标角度
-    float gimbal_yaw_set_angle = cmd_media_param.yaw_control;
-    // 云台误差角
-    float gimbal_error_angle = (gimbal_yaw_set_angle - gimbal_yaw_current_angle) * RAD_2_DEGREE;
+    float gimbal_yaw_set_angle     = cmd_media_param.yaw_control;
+    float gimbal_error_angle       = (gimbal_yaw_set_angle - gimbal_yaw_current_angle) * RAD_2_DEGREE;
 
-#if YAW_ECD_GREATER_THAN_4096 // 如果大于180度
+#if YAW_ECD_GREATER_THAN_4096
     float offset_angle = angle < 180.0f + YAW_ALIGN_ANGLE && angle >= YAW_ALIGN_ANGLE - 180.0f ? angle - YAW_ALIGN_ANGLE
                                                                                                : angle - YAW_ALIGN_ANGLE + 360.0f;
-#else // 小于180度
+#else
     float offset_angle = angle >= YAW_ALIGN_ANGLE - 180.0f && angle <= YAW_ALIGN_ANGLE + 180.0f ? angle - YAW_ALIGN_ANGLE
                                                                                                 : angle - YAW_ALIGN_ANGLE - 360.0f;
 #endif
@@ -187,9 +183,6 @@ void ShootControl()
 /**
  * @brief  紧急停止,双下
  *
- *
- * @todo   后续修改为遥控器离线则电机停止(关闭遥控器急停),通过给遥控器模块添加daemon实现
- *
  */
 static void emergencyhandler()
 {
@@ -241,17 +234,14 @@ static void remotecontrolset()
             break;
     }
 
-    // 底盘参数
     chassis_cmd_send.vx = 20000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r_; // 水平方向
     chassis_cmd_send.vy = 20000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r1; // 竖直方向
 
     chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].rc.dial > 400 ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
 
-    // 云台参数
     gimbal_cmd_send.yaw   = cmd_media_param.yaw_control;
     gimbal_cmd_send.pitch = cmd_media_param.pitch_control;
 
-    // 新热量管理
     if (referee_data->GameRobotState.shooter_id1_17mm_cooling_limit - shoot_fetch_data.shooter_local_heat <= shoot_fetch_data.shooter_heat_control) {
         shoot_cmd_send.load_mode = LOAD_STOP;
     }
@@ -339,7 +329,7 @@ static void keymodeset()
 }
 
 /**
- * @brief 机器人复位函数，按下Ctrl+Shift+r
+ * @brief 机器人软件复位，按下Ctrl+Shift+r
  *
  *
  */
@@ -348,7 +338,7 @@ static void robotreset()
     if (rc_data[TEMP].key[KEY_PRESS].shift && rc_data[TEMP].key[KEY_PRESS].ctrl && rc_data[TEMP].key[KEY_PRESS].r) {
         osDelay(1000);
         __set_FAULTMASK(1);
-        NVIC_SystemReset(); // 软件复位
+        NVIC_SystemReset();
     }
 }
 
@@ -410,6 +400,7 @@ void CmdMsgComm()
     memcpy(&master_cmd_send.robot_id, &referee_data->GameRobotState.robot_id, sizeof(uint8_t));
     memcpy(&master_cmd_send.rune_mode, &cmd_media_param.auto_rune, sizeof(uint8_t));
 
+    // push
     PubPushMessage(chassis_cmd_pub, (void *)&chassis_cmd_send);
     PubPushMessage(shoot_cmd_pub, (void *)&shoot_cmd_send);
     PubPushMessage(gimbal_cmd_pub, (void *)&gimbal_cmd_send);

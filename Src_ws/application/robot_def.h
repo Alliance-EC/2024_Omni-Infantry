@@ -102,6 +102,11 @@ typedef enum {
 
 } loader_mode_e;
 
+typedef enum {
+    BAY_CLOSE = 0,
+    BAY_OPEN
+} bullet_bay_mode_e;
+
 /* ----------------CMD应用发布的控制数据,应当由gimbal/chassis/shoot/UI订阅---------------- */
 /**
  * @brief 对于双板情况,遥控器和pc在云台,裁判系统在底盘
@@ -146,6 +151,7 @@ typedef struct
     shoot_mode_e shoot_mode;
     loader_mode_e load_mode;
     friction_mode_e friction_mode;
+    bullet_bay_mode_e bay_mode;
     uint16_t shooter_heat_cooling_rate; // 枪口热量冷却
     uint16_t shooter_referee_heat;      // 17mm枪口热量
     uint16_t shooter_cooling_limit;     // 枪口热量上限
