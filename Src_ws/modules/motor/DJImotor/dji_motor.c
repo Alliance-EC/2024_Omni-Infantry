@@ -241,7 +241,7 @@ void DJIMotorControl()
         motor_controller        = &motor->motor_controller;
         measure                 = &motor->measure;
         pid_ref                 = motor_controller->pid_ref; // 保存设定值,防止motor_controller->pid_ref在计算过程中被修改
-        chassis_power_zoom_coef = dji_motor_instance[0]->chassis_power_zoom_coef;
+        chassis_power_zoom_coef = dji_motor_instance[5]->chassis_power_zoom_coef;
 
         // pid_ref会顺次通过被启用的闭环充当数据的载体
         // 计算位置环,只有启用位置环且外层闭环为位置时会计算速度环输出
@@ -280,8 +280,8 @@ void DJIMotorControl()
         if (motor_setting->feedback_reverse_flag == FEEDBACK_DIRECTION_REVERSE)
             pid_ref *= -1;
 
-        // if (motor->sender_group == 1)
-        //     pid_ref *= chassis_power_zoom_coef;
+        if (motor->sender_group == 1)
+            pid_ref *= chassis_power_zoom_coef;
 
         // 获取最终输出
         set = (int16_t)pid_ref;

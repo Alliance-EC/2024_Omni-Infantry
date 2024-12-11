@@ -30,6 +30,7 @@ typedef struct {
     chassis_mode_e last_chassis_mode_;
     friction_mode_e last_fric_mode_;
     loader_mode_e last_load_mode_;
+    bullet_bay_mode_e last_bay_mode_;
 } CmdInstance;
 
 /* 初始化 */

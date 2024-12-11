@@ -13,7 +13,6 @@
 #define SERVO_MOTOR_H
 
 #include "main.h"
-#include "tim.h"
 #include <stdint-gcc.h>
 
 #define SERVO_MOTOR_CNT 7

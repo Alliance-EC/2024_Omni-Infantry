@@ -26,15 +26,14 @@ static float limit_output(float *val, float min, float max)
 
 void power_calc_params_init(float reduction_ratio_init, bool output_direction_init)
 {
-    powercalcinstance.current_coef  = 8.40e-08f;
-    powercalcinstance.velocity_coef = 4.10e-07f;
+    powercalcinstance.current_coef  = 1.502f;
+    powercalcinstance.velocity_coef = 0.005f;
 
     powercalcinstance.output_direction = output_direction_init;
 
-    powercalcinstance.reduction_ratio = reduction_ratio_init != 0 ? reduction_ratio_init
-                                                                  : REDUCTION_RATIO_OF_DJI;
+    powercalcinstance.reduction_ratio = reduction_ratio_init;
 
-    powercalcinstance.torque_current_coefficient = CMD_2_CURRENT * TORQUE_COEFFICIENT * powercalcinstance.reduction_ratio;
+    powercalcinstance.torque_current_coefficient = CMD_2_CURRENT * TORQUE_COEFFICIENT * (REDUCTION_RATIO_OF_DJI / reduction_ratio_init);
     powercalcinstance.static_consumption         = 1.0f;
 }
 
@@ -43,7 +42,7 @@ void max_power_update(uint16_t max_power_init)
     powercalcinstance.max_power = max_power_init;
 }
 
-// p=t*w(b)+k1*w2(c)+k2*t2(a)
+// p=t*w(b)+k1*w2(c)+k2*t2(a)+P_s_c
 float current_output_calc(volatile Power_Data_s *motors_data)
 {
     float a = 0, b = 0, c = 0;
@@ -51,14 +50,14 @@ float current_output_calc(volatile Power_Data_s *motors_data)
         motors_data->cmd_torque[motor_id] = motors_data->cmd_current[motor_id] * powercalcinstance.torque_current_coefficient;
         a += powercalcinstance.current_coef * powf(motors_data->cmd_torque[motor_id], 2.);
         b += motors_data->cmd_torque[motor_id] * motors_data->wheel_velocity[motor_id];
-        c += powercalcinstance.velocity_coef * powf(motors_data->wheel_velocity[motor_id], 2.) - powercalcinstance.static_consumption;
+        c += powercalcinstance.velocity_coef * powf(motors_data->wheel_velocity[motor_id], 2.) + powercalcinstance.static_consumption;
     }
 
-    powercalcinstance.real_power = a + b + c;
+    powercalcinstance.calc_power = a + b + c;
 
     c -= powercalcinstance.max_power;
 
-    powercalcinstance.zoom_coef = powercalcinstance.real_power < powercalcinstance.max_power ? 1.0 : (b * b - 4 * a * c) > 0 ? (-b + sqrtf(b * b - 4 * a * c)) / (2 * a)
+    powercalcinstance.zoom_coef = powercalcinstance.calc_power < powercalcinstance.max_power ? 1.0 : (b * b - 4 * a * c) > 0 ? (-b + sqrtf(b * b - 4 * a * c)) / (2 * a)
                                                                                                                              : 0.;
     return powercalcinstance.zoom_coef;
     // return limit_output(&powercalcinstance.zoom_coef, 0.0, 1.0);

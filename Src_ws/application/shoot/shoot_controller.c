@@ -109,9 +109,9 @@ void ShootMsgInit()
 
 void ShootParamInit()
 {
-    int16_t Init_angle  = 0;
-    int16_t Final_angle = 90;
-    servo_init_end_angle_set(bullet_bay_cover, Init_angle, Final_angle);
+    int16_t init_angle  = 100;
+    int16_t final_angle = 0;
+    servo_init_end_angle_set(bullet_bay_cover, init_angle, final_angle);
 
     shoot_media_param.heat_control    = 25; // 热量控制
     shoot_media_param.local_heat      = 0;  // 本地热量
@@ -200,7 +200,7 @@ void ShootModeSet()
             shoot_media_param.one_bullet          = 0;
             break;
         // 激活能量机关
-        case LOAD_1_BULLET:
+        case LOAD_SINGLE:
             shoot_media_param.shoot_heat_count[1] = shoot_media_param.shoot_count;
             if (shoot_media_param.shoot_heat_count[1] - shoot_media_param.shoot_heat_count[0] >= 1) {
                 shoot_media_param.one_bullet = 1;
@@ -217,9 +217,6 @@ void ShootModeSet()
         // 连发模式
         case LOAD_BURSTFIRE:
             DJIMotorSetRef(loader, shoot_cmd_recv.loader_rate);
-            break;
-        case LOAD_JAM:
-            DJIMotorSetRef(loader, shoot_cmd_recv.loader_rate / 3);
             break;
         case LOAD_REVERSE:
             DJIMotorSetRef(loader, -shoot_cmd_recv.loader_rate / 2);

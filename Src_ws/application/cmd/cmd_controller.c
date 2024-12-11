@@ -130,11 +130,10 @@ void GimbalModeSwitch()
             cmd_media_param.yaw_control += rc_data[TEMP].mouse.x / 350.0f;
             cmd_media_param.pitch_control += -rc_data[TEMP].mouse.y / 15500.0f;
         } else if (ENTIREDISABLE) {
-            cmd_media_param.pitch_control = cmd_media_param.pitch_control;
-            cmd_media_param.yaw_control   = cmd_media_param.yaw_control;
+            // none
         } else {
-            cmd_media_param.yaw_control += -0.0000080f * rc_data[TEMP].rc.rocker_l_;
-            cmd_media_param.pitch_control += -0.0000080f * rc_data[TEMP].rc.rocker_l1;
+            cmd_media_param.yaw_control -= 0.0000080f * rc_data[TEMP].rc.rocker_l_;
+            cmd_media_param.pitch_control -= 0.0000080f * rc_data[TEMP].rc.rocker_l1;
         }
     }
 
@@ -242,6 +241,11 @@ static void remotecontrolset()
     gimbal_cmd_send.yaw   = cmd_media_param.yaw_control;
     gimbal_cmd_send.pitch = cmd_media_param.pitch_control;
 
+    if (rc_data[TEMP].rc.dial < -400)
+        shoot_cmd_send.bay_mode = (cmd_media_param.last_bay_mode_ == BAY_CLOSE) ? BAY_OPEN : BAY_CLOSE;
+    else
+        cmd_media_param.last_bay_mode_ = shoot_cmd_send.bay_mode;
+
     if (referee_data->GameRobotState.shooter_id1_17mm_cooling_limit - shoot_fetch_data.shooter_local_heat <= shoot_fetch_data.shooter_heat_control) {
         shoot_cmd_send.load_mode = LOAD_STOP;
     }
@@ -287,7 +291,7 @@ static void shootset()
     if (shoot_cmd_send.friction_mode == FRICTION_ON) {
 
         if (rc_data[TEMP].mouse.press_l)
-            shoot_cmd_send.load_mode = cmd_media_param.auto_rune ? LOAD_1_BULLET : LOAD_BURSTFIRE;
+            shoot_cmd_send.load_mode = cmd_media_param.auto_rune ? LOAD_SINGLE : LOAD_BURSTFIRE;
         else
             shoot_cmd_send.load_mode = LOAD_STOP;
 

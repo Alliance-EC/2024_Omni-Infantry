@@ -181,8 +181,8 @@ void PowerController()
     motors_data.motor_id = 0;
     do {
         motors_data.cmd_current[motors_data.motor_id]    = motors[motors_data.motor_id]->motor_controller.speed_PID.Output;
-        motors_data.wheel_velocity[motors_data.motor_id] = motors[motors_data.motor_id]->measure.speed_rpm * RPM_2_RAD_PER_SEC;
-    } while (++motors_data.motor_id < joint_lb);
+        motors_data.wheel_velocity[motors_data.motor_id] = motors[motors_data.motor_id]->measure.speed_rpm * REDUCTION_RATIO_WHEEL * RPM_2_RAD_PER_SEC;
+    } while (++motors_data.motor_id <= joint_lb);
 
     motors[joint_lf]->chassis_power_zoom_coef = current_output_calc(&motors_data);
 

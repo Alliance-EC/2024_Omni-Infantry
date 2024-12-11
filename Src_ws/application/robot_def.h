@@ -22,7 +22,7 @@
 /* 机器人重要参数定义,注意根据不同机器人进行修改,浮点数需要以.0或f结尾,无符号以u结尾 */
 
 // 云台参数
-#define YAW_CHASSIS_ALIGN_ECD     2728 // 云台和底盘对齐指向相同方向时的电机编码器值,若对云台有机械改动需要修改
+#define YAW_CHASSIS_ALIGN_ECD     2331 // 云台和底盘对齐指向相同方向时的电机编码器值,若对云台有机械改动需要修改
 #define YAW_ECD_GREATER_THAN_4096 0    // ALIGN_ECD值是否大于4096,是为1,否为0;用于计算云台偏转角度
 
 #define YAW_ALIGN_ANGLE           (YAW_CHASSIS_ALIGN_ECD * ECD_ANGLE_COEF_DJI) // 对齐时的角度,0-360
@@ -36,12 +36,12 @@
 #define NUM_PER_CIRCLE         8     // 拨盘一圈的装载量
 
 // 底盘参数,单位为mm(毫米)
-#define WHEEL_BASE             350  // 纵向轴距(前进后退方向)
-#define TRACK_WIDTH            350  // 横向轮距(左右平移方向)
-#define CENTER_GIMBAL_OFFSET_X 0    // 云台旋转中心距底盘几何中心的距离,前后方向,云台位于正中心时默认设为0
-#define CENTER_GIMBAL_OFFSET_Y 0    // 云台旋转中心距底盘几何中心的距离,左右方向,云台位于正中心时默认设为0
-#define RADIUS_WHEEL           153  // 轮子半径
-#define REDUCTION_RATIO_WHEEL  0.0f // 电机减速比,因为编码器量测的是转子的速度而不是输出轴的速度故需进行转换
+#define WHEEL_BASE             350         // 纵向轴距(前进后退方向)
+#define TRACK_WIDTH            350         // 横向轮距(左右平移方向)
+#define CENTER_GIMBAL_OFFSET_X 0           // 云台旋转中心距底盘几何中心的距离,前后方向,云台位于正中心时默认设为0
+#define CENTER_GIMBAL_OFFSET_Y 0           // 云台旋转中心距底盘几何中心的距离,左右方向,云台位于正中心时默认设为0
+#define RADIUS_WHEEL           153         // 轮子半径
+#define REDUCTION_RATIO_WHEEL  1.0 / 19.2f // 电机减速比,因为编码器量测的是转子的速度而不是输出轴的速度故需进行转换
 
 #define MOTOR_OUTPUT_DIRECTION 0 // 转子与输出同向为1，反向为0
 
@@ -95,7 +95,7 @@ typedef enum {
 
 typedef enum {
     LOAD_STOP = 0,  // 停止发射
-    LOAD_1_BULLET,  // 单发
+    LOAD_SINGLE,    // 单发
     LOAD_BURSTFIRE, // 连发
     LOAD_REVERSE,   // 反转
     LOAD_JAM,
@@ -210,8 +210,6 @@ typedef struct
 {
     INS_Instance *gimbal_imu_data;
     uint16_t yaw_motor_single_round_angle;
-    uint16_t yaw_ecd;
-    uint16_t pitch_ecd;
 } Gimbal_Upload_Data_s;
 
 typedef struct

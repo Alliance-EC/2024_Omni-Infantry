@@ -18,7 +18,7 @@ typedef struct {
 
     float zoom_coef;
 
-    float real_power;
+    float calc_power;
 
     // 更新值
     uint16_t max_power;
