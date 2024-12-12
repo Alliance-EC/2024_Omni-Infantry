@@ -16,6 +16,7 @@
 #include "dji_motor.h"
 #include "message_center.h"
 #include "ramp.h"
+#include "general_def.h"
 #include <stdint.h>
 
 static Publisher_t *shoot_pub;

@@ -2,10 +2,6 @@
 
 #include <stdint.h>
 
-#define bool      _Bool
-#define true      1
-#define false     0
-
 #define RAMP_TIME 1500 // 1000
 
 // 斜坡类型，计算WASD移动映射在底盘的速度

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ramp.h"
+#include "general_def.h"
+#include <stdint.h>
 
 #define CMD_2_CURRENT          (20.0f / 16384.0f)
 #define TORQUE_COEFFICIENT     0.3f

@@ -233,8 +233,8 @@ static void remotecontrolset()
             break;
     }
 
-    chassis_cmd_send.vx = 20000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r_; // 水平方向
-    chassis_cmd_send.vy = 20000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r1; // 竖直方向
+    chassis_cmd_send.vx = 40000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r_; // 水平方向
+    chassis_cmd_send.vy = 40000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r1; // 竖直方向
 
     chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].rc.dial > 400 ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
 
@@ -253,7 +253,14 @@ static void remotecontrolset()
 
 static void chassisset()
 {
-    chassis_cmd_send.chassis_mode = CHASSIS_FOLLOW_GIMBAL_YAW;
+    chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].key[KEY_PRESS].shift ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
+
+    chassis_mode_e last_chassis_mode_ = CHASSIS_NO_FOLLOW;
+
+    if (rc_data[TEMP].key[KEY_PRESS].c)
+        chassis_cmd_send.chassis_mode = (last_chassis_mode_ == CHASSIS_ROTATE) ? CHASSIS_FOLLOW_GIMBAL_YAW : CHASSIS_ROTATE;
+    else
+        last_chassis_mode_ = chassis_cmd_send.chassis_mode;
 
     static float current_speed_x = 0;
     static float current_speed_y = 0;
@@ -282,14 +289,32 @@ static void chassisset()
 
 static void gimbalset()
 {
+    cmd_media_param.ui_refresh_flag = rc_data[TEMP].key[KEY_PRESS].r ? 1 : 0;
+
     gimbal_cmd_send.yaw   = cmd_media_param.yaw_control;
     gimbal_cmd_send.pitch = cmd_media_param.pitch_control;
 }
 
 static void shootset()
 {
-    if (shoot_cmd_send.friction_mode == FRICTION_ON) {
+    bullet_bay_mode_e last_bay_mode_ = BAY_CLOSE;
+    friction_mode_e last_fric_mode_  = FRICTION_OFF;
 
+    cmd_media_param.auto_rune = rc_data[TEMP].key[KEY_PRESS].ctrl ? 1 : 0;
+
+    cmd_media_param.auto_aim = rc_data[TEMP].mouse.press_r ? 1 : 0;
+
+    if (rc_data[TEMP].key[KEY_PRESS].b)
+        shoot_cmd_send.bay_mode = (last_bay_mode_ == BAY_CLOSE) ? BAY_OPEN : BAY_CLOSE;
+    else
+        last_bay_mode_ = shoot_cmd_send.bay_mode;
+
+    if (rc_data[TEMP].key[KEY_PRESS].v)
+        shoot_cmd_send.friction_mode = (last_fric_mode_ == FRICTION_OFF) ? FRICTION_ON : FRICTION_OFF;
+    else
+        last_fric_mode_ = shoot_cmd_send.friction_mode;
+
+    if (shoot_cmd_send.friction_mode == FRICTION_ON) {
         if (rc_data[TEMP].mouse.press_l)
             shoot_cmd_send.load_mode = cmd_media_param.auto_rune ? LOAD_SINGLE : LOAD_BURSTFIRE;
         else
@@ -298,38 +323,6 @@ static void shootset()
         if (referee_data->GameRobotState.shooter_id1_17mm_cooling_limit - shoot_fetch_data.shooter_local_heat <= shoot_fetch_data.shooter_heat_control)
             shoot_cmd_send.load_mode = LOAD_STOP;
     }
-}
-
-static void keymodeset()
-{
-
-    switch (rc_data[TEMP].key_count[KEY_PRESS][Key_C] % 2) {
-        case 1:
-            if (chassis_cmd_send.chassis_mode != CHASSIS_ROTATE)
-                chassis_cmd_send.chassis_mode = CHASSIS_ROTATE;
-            break;
-        case 0:
-            chassis_cmd_send.chassis_mode = CHASSIS_FOLLOW_GIMBAL_YAW;
-            break;
-    }
-
-    switch (rc_data[TEMP].key_count[KEY_PRESS][Key_V] % 2) {
-        case 1:
-            if (shoot_cmd_send.friction_mode != FRICTION_ON)
-                shoot_cmd_send.friction_mode = FRICTION_ON;
-            break;
-        case 0:
-            shoot_cmd_send.friction_mode = FRICTION_OFF;
-            break;
-    }
-
-    cmd_media_param.ui_refresh_flag = rc_data[TEMP].key[KEY_PRESS].r ? 1 : 0;
-
-    cmd_media_param.auto_rune = rc_data[TEMP].key[KEY_PRESS].ctrl ? 1 : 0;
-
-    chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].key[KEY_PRESS].shift ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
-
-    cmd_media_param.auto_aim = rc_data[TEMP].mouse.press_r ? 1 : 0;
 }
 
 /**
@@ -351,7 +344,6 @@ static void mousekeyset()
     chassisset();
     gimbalset();
     shootset();
-    keymodeset();
     robotreset();
 }
 

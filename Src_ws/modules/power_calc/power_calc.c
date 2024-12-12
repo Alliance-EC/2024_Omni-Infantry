@@ -48,8 +48,11 @@ float current_output_calc(volatile Power_Data_s *motors_data)
     float a = 0, b = 0, c = 0;
     for (uint8_t motor_id = 0; motor_id < 4; motor_id++) {
         motors_data->cmd_torque[motor_id] = motors_data->cmd_current[motor_id] * powercalcinstance.torque_current_coefficient;
+
         a += powercalcinstance.current_coef * powf(motors_data->cmd_torque[motor_id], 2.);
+
         b += motors_data->cmd_torque[motor_id] * motors_data->wheel_velocity[motor_id];
+
         c += powercalcinstance.velocity_coef * powf(motors_data->wheel_velocity[motor_id], 2.) + powercalcinstance.static_consumption;
     }
 
@@ -60,5 +63,4 @@ float current_output_calc(volatile Power_Data_s *motors_data)
     powercalcinstance.zoom_coef = powercalcinstance.calc_power < powercalcinstance.max_power ? 1.0 : (b * b - 4 * a * c) > 0 ? (-b + sqrtf(b * b - 4 * a * c)) / (2 * a)
                                                                                                                              : 0.;
     return powercalcinstance.zoom_coef;
-    // return limit_output(&powercalcinstance.zoom_coef, 0.0, 1.0);
 }
