@@ -43,18 +43,18 @@ __attribute__((noreturn)) void _RobotCMDTask(void *argument)
         RobotCMDTask();
         cmd_dt = 1000 * DWT_GetDeltaT(&cmd_time);
         if (cmd_dt > 1.2f)
-            LOGERROR("[freeRTOS] Robot Task is being DELAY! dt = [%f]ms", &cmd_dt);
+            LOGERROR("[freeRTOS] RobotCMD Task is being DELAY! dt = [%f]ms", &cmd_dt);
         osDelay(1);
     }
 }
 
-__attribute__((noreturn)) void _MasterTask(void *argument)
-{
-    for (;;) {
-        MasterTask();
-        osDelay(1);
-    }
-}
+// __attribute__((noreturn)) void _MasterTask(void *argument)
+// {
+//     for (;;) {
+//         MasterTask();
+//         osDelay(1);
+//     }
+// }
 
 __attribute__((noreturn)) void _ChassisTask(void *argument)
 {
@@ -98,6 +98,6 @@ __attribute__((noreturn)) void _DaemonTask(void *argument)
 {
     for (;;) {
         DaemonTask();
-        osDelay(1);
+        osDelay(10);
     }
 }

@@ -38,7 +38,7 @@ void RobotInit()
     buzzer_one_note(Fa_freq, 0.1f);
     ChassisInit();
     buzzer_one_note(So_freq, 0.1f);
-    MasterInit();
+    // MasterInit();
     buzzer_one_note(La_freq, 0.1f);
     UIInit();
     buzzer_one_note(Si_freq, 0.1f);

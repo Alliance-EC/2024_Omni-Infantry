@@ -23,6 +23,8 @@ typedef struct {
     float sin_theta, cos_theta;
     float current_speed_vw;
     PIDInstance chassis_follow_cotroller;
+
+    float remain_power;
 } ChassisInstance;
 
 /**
