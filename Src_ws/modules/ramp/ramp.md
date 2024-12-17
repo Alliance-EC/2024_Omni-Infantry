@@ -48,25 +48,3 @@ float ramp_calc(ramp_t *ramp)
 ```
 
 规模值不为0时，输出值out为count与scale的比值，直到count等于scale，之后输出值恒为1。
-
-### 变量
-
-```C
-ramp_t fb_ramp     = RAMP_GEN_DAFAULT;
-ramp_t lr_ramp     = RAMP_GEN_DAFAULT;
-ramp_t rotate_ramp = RAMP_GEN_DAFAULT;
-ramp_t slow_ramp   = RAMP_GEN_DAFAULT;
-```
-
-
-
-## 热量控制
-
-### 变量
-
-```c
-int heat_control    = 20; // 热量控制
-float heat_remain   = 0;  // 剩余热量
-float local_heat    = 0;  // 本地热量
-int One_bullet_heat = 10; // 打一发消耗热量
-```

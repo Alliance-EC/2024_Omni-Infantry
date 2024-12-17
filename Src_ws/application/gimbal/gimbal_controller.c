@@ -59,7 +59,7 @@ void GimbalDeviceInit()
         .work_mode = BMI088_BLOCK_PERIODIC_MODE,
 
     };
-    gimbal_IMU_data = INS_Init(BMI088Register(&config)); // IMU先初始化,获取姿态数据指针赋给yaw电机的其他数据来源
+    gimbal_IMU_data = INS_Init(BMI088Register(&config));
     // YAW
     Motor_Init_Config_s yaw_config = {
         .can_init_config = {
@@ -148,7 +148,6 @@ void GimbalModeSet()
             DJIMotorStop(yaw_motor);
             DJIMotorStop(pitch_motor);
             break;
-        // 使用陀螺仪的反馈,底盘根据yaw电机的offset跟随云台或视觉模式采用
         case GIMBAL_GYRO_MODE:
             DJIMotorEnable(yaw_motor);
             DJIMotorEnable(pitch_motor);
@@ -165,9 +164,8 @@ void GimbalMsgComm()
     // 获取云台控制数据
     SubGetMessage(gimbal_sub, &gimbal_cmd_recv);
 
-    // 设置反馈数据,主要是imu和yaw的ecd
     gimbal_feedback_data.gimbal_imu_data              = gimbal_IMU_data;
-    gimbal_feedback_data.yaw_motor_single_round_angle = (uint16_t)yaw_motor->measure.angle_single_round; // 推送消息
+    gimbal_feedback_data.yaw_motor_single_round_angle = (uint16_t)yaw_motor->measure.angle_single_round;
 
     // 推送消息
     PubPushMessage(gimbal_pub, (void *)&gimbal_feedback_data);

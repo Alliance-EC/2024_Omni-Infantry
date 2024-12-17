@@ -2,9 +2,8 @@
 
 #include <stdint.h>
 
-#define RAMP_TIME 1500 // 1000
+#define RAMP_TIME 1500
 
-// 斜坡类型，计算WASD移动映射在底盘的速度
 typedef struct ramp_t {
     int32_t count; // 计数值
     int32_t scale; // 规模

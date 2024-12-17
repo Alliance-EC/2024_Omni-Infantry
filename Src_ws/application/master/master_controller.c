@@ -27,7 +27,7 @@ static Subscriber_t *master_sub;
 static Master_Cmd_s master_cmd_recv;
 static Master_Upload_Data_s master_feedback_data;
 /**
- * @brief usbj接收回调函数
+ * @brief usb接收回调函数
  *
  */
 static void HOST_RECV_CALLBACK()

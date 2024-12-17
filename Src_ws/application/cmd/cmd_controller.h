@@ -15,7 +15,6 @@
 #define SHOOT_LOAD       4
 
 typedef struct {
-    /*控制值*/
     uint8_t ui_refresh_flag; // UI发送标志位
 
     uint8_t auto_aim;

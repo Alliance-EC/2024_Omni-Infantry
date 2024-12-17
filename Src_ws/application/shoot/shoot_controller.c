@@ -114,10 +114,10 @@ void ShootParamInit()
     int16_t final_angle = 0;
     servo_init_end_angle_set(bullet_bay_cover, init_angle, final_angle);
 
-    shoot_media_param.heat_control    = 25; // 热量控制
-    shoot_media_param.local_heat      = 0;  // 本地热量
-    shoot_media_param.One_bullet_heat = 10; // 打一发消耗热量
-    shoot_media_param.shoot_count     = 0;  // 已发弹量
+    shoot_media_param.heat_control    = 25;
+    shoot_media_param.local_heat      = 0;
+    shoot_media_param.One_bullet_heat = 10;
+    shoot_media_param.shoot_count     = 0;
 
     ramp_init(&shoot_media_param.fric_on_ramp, 200);
     ramp_init(&shoot_media_param.fric_off_ramp, 200);
@@ -128,7 +128,7 @@ void loader_status_update(void)
     static float load_starting_count_ = 0;
     static float load_jaming_count_   = 0;
     static float load_rollback_count_ = 0;
-    // 获取拨弹盘转速
+
     shoot_media_param.loader_velocity = loader->measure.speed_aps * NUM_PER_CIRCLE /
                                         REDUCTION_RATIO_LOADER / 360.0;
 
@@ -193,14 +193,12 @@ void ShootModeSet()
     }
 
     switch (shoot_cmd_recv.load_mode) {
-        // 停止拨盘
         case LOAD_STOP:
             DJIMotorSetRef(loader, 0);
             shoot_media_param.shoot_heat_count[0] = shoot_media_param.shoot_count;
             shoot_media_param.shoot_heat_count[1] = shoot_media_param.shoot_heat_count[0];
             shoot_media_param.one_bullet          = 0;
             break;
-        // 激活能量机关
         case LOAD_SINGLE:
             shoot_media_param.shoot_heat_count[1] = shoot_media_param.shoot_count;
             if (shoot_media_param.shoot_heat_count[1] - shoot_media_param.shoot_heat_count[0] >= 1) {
@@ -215,7 +213,6 @@ void ShootModeSet()
                     break;
             }
             break;
-        // 连发模式
         case LOAD_BURSTFIRE:
             DJIMotorSetRef(loader, shoot_cmd_recv.loader_rate);
             break;

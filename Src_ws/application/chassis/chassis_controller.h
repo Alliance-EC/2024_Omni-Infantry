@@ -9,16 +9,14 @@
 #define RB_CENTER ((HALF_TRACK_WIDTH - CENTER_GIMBAL_OFFSET_X + HALF_WHEEL_BASE + CENTER_GIMBAL_OFFSET_Y) * DEGREE_2_RAD)
 
 typedef struct {
-    uint8_t center_gimbal_offset_x; // 云台旋转中心距底盘几何中心的距离
+    uint8_t center_gimbal_offset_x;
     uint8_t center_gimbal_offset_y;
 
     float wz;
 
-    /* 私有函数计算的中介变量,设为静态避免参数传递的开销 */
-    float chassis_vx, chassis_vy, chassis_vw; // 将云台系的速度投影到底盘
-    float vt_lf, vt_rf, vt_lb, vt_rb;         // 底盘速度解算后的临时输出,待进行限幅
+    float chassis_vx, chassis_vy, chassis_vw;
+    float vt_lf, vt_rf, vt_lb, vt_rb;
 
-    /*模式参数 */
     float offset_angle;
     float sin_theta, cos_theta;
     float current_speed_vw;
@@ -57,8 +55,8 @@ void ChassisModeSet();
 void PowerController();
 
 /**
- * @brief 计算每个轮毂电机的输出,全向轮正运动学解算
- *        用宏进行预替换减小开销,运动解算具体过程参考教程
+ * @brief 计算每个轮毂电机的输出,全向轮运动学解算
+ *
  */
 void OmniCalculate();
 

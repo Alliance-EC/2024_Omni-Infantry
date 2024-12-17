@@ -9,7 +9,7 @@ static void LimitChassisOutput(uint16_t power_buffer, uint16_t power_limit, ramp
 {
     // 缓冲能量闭环
     float power_buffer_zoom_coef = (float)power_buffer / 60;
-    // power_set = 80;
+
     power_set = power_limit + 15 * power_buffer_zoom_coef;
     max_power_update(power_set);
 
