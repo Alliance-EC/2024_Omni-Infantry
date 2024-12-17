@@ -2,6 +2,7 @@
 
 #include "robot_def.h"
 #include "ramp.h"
+#include <stdint.h>
 
 #define RC_LOST         (rc_data[TEMP].rc.switch_left == 0 && rc_data[TEMP].rc.switch_right == 0)
 #define MOUSEKEYCONTROL switch_is_up(rc_data[TEMP].rc.switch_left) && (switch_is_down(rc_data[TEMP].rc.switch_right))
@@ -31,6 +32,8 @@ typedef struct {
     friction_mode_e last_fric_mode_;
     loader_mode_e last_load_mode_;
     bullet_bay_mode_e last_bay_mode_;
+
+    uint8_t emerg_handle_log_cnt;
 } CmdInstance;
 
 /* 初始化 */

@@ -26,8 +26,8 @@ static float limit_output(float *val, float min, float max)
 
 void power_calc_params_init(float reduction_ratio_init, bool output_direction_init)
 {
-    powercalcinstance.current_coef  = 1.502f;
-    powercalcinstance.velocity_coef = 0.005f;
+    powercalcinstance.current_coef  = 1.500f;
+    powercalcinstance.velocity_coef = 0.008f;
 
     powercalcinstance.output_direction = output_direction_init;
 

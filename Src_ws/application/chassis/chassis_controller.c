@@ -95,7 +95,7 @@ void ChassisParamInit()
 {
     PID_Init_Config_s follow_pid = {
         .Kp            = 1.0,
-        .Ki            = 0,
+        .Ki            = 0.0,
         .Kd            = 0,
         .IntegralLimit = 3000,
         .Improve       = PID_Trapezoid_Intergral | PID_Integral_Limit | PID_Derivative_On_Measurement,
@@ -161,10 +161,10 @@ void ChassisModeSet()
             chassis_media_param.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
             break;
         case CHASSIS_ROTATE:
-            chassis_media_param.wz = 5000;
+            chassis_media_param.wz = 4000;
             break;
         case CHASSIS_REVERSE:
-            chassis_media_param.wz = -5000;
+            chassis_media_param.wz = -4000;
         default:
             break;
     }

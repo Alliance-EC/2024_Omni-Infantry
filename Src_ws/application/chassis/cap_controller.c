@@ -7,26 +7,10 @@ static float power_set;
 
 static void LimitChassisOutput(uint16_t power_buffer, uint16_t power_limit, ramp_t *s_ramp_)
 {
-    float Plimit = 0;
-
     // 缓冲能量闭环
-    if (power_buffer < 50 && power_buffer >= 40)
-        Plimit = 0.9 + (power_buffer - 40) * 0.01;
-    else if (power_buffer < 40 && power_buffer >= 35)
-        Plimit = 0.75 + (power_buffer - 35) * (0.15f / 5);
-    else if (power_buffer < 35 && power_buffer >= 30)
-        Plimit = 0.6 + (power_buffer - 30) * (0.15 / 5);
-    else if (power_buffer < 30 && power_buffer >= 20)
-        Plimit = 0.35 + (power_buffer - 20) * (0.25f / 10);
-    else if (power_buffer < 20 && power_buffer >= 10)
-        Plimit = 0.15 + (power_buffer - 10) * 0.01;
-    else if (power_buffer < 10 && power_buffer > 0)
-        Plimit = 0.05 + power_buffer * 0.01;
-    else if (power_buffer == 60)
-        Plimit = 1;
-
-    power_set = 80;
-    // Power_Output = power_limit - 10 + 20 * Plimit;
+    float power_buffer_zoom_coef = (float)power_buffer / 60;
+    // power_set = 80;
+    power_set = power_limit + 15 * power_buffer_zoom_coef;
     max_power_update(power_set);
 
     ramp_init(s_ramp_, 300);

@@ -195,12 +195,17 @@ static void emergencyhandler()
     cmd_media_param.last_chassis_mode_ = CHASSIS_ZERO_FORCE;
     cmd_media_param.last_fric_mode_    = FRICTION_OFF;
     cmd_media_param.last_load_mode_    = LOAD_STOP;
+    cmd_media_param.last_bay_mode_     = BAY_CLOSE;
 
-    LOGERROR("[CMD] emergency stop!");
+    if (!cmd_media_param.emerg_handle_log_cnt) {
+        LOGERROR("[CMD] emergency stop!");
+        cmd_media_param.emerg_handle_log_cnt = 1;
+    }
 }
 
 static void remotecontrolset()
 {
+    cmd_media_param.emerg_handle_log_cnt = 0;
 
     switch (rc_data[TEMP].rc.switch_right) {
         case RC_SW_MID:
@@ -255,13 +260,10 @@ static void chassisset()
 {
     chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].key[KEY_PRESS].shift ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
 
-    chassis_mode_e last_chassis_mode_ = CHASSIS_NO_FOLLOW;
-
     if (rc_data[TEMP].key[KEY_PRESS].c)
-        chassis_cmd_send.chassis_mode = (last_chassis_mode_ == CHASSIS_ROTATE) ? CHASSIS_FOLLOW_GIMBAL_YAW : CHASSIS_ROTATE;
+        chassis_cmd_send.chassis_mode = (cmd_media_param.last_chassis_mode_ == CHASSIS_ROTATE) ? CHASSIS_FOLLOW_GIMBAL_YAW : CHASSIS_ROTATE;
     else
-        last_chassis_mode_ = chassis_cmd_send.chassis_mode;
-
+        cmd_media_param.last_chassis_mode_ = chassis_cmd_send.chassis_mode;
     static float current_speed_x = 0;
     static float current_speed_y = 0;
 
@@ -297,22 +299,18 @@ static void gimbalset()
 
 static void shootset()
 {
-    bullet_bay_mode_e last_bay_mode_ = BAY_CLOSE;
-    friction_mode_e last_fric_mode_  = FRICTION_OFF;
-
     cmd_media_param.auto_rune = rc_data[TEMP].key[KEY_PRESS].ctrl ? 1 : 0;
-
-    cmd_media_param.auto_aim = rc_data[TEMP].mouse.press_r ? 1 : 0;
+    cmd_media_param.auto_aim  = rc_data[TEMP].mouse.press_r ? 1 : 0;
 
     if (rc_data[TEMP].key[KEY_PRESS].b)
-        shoot_cmd_send.bay_mode = (last_bay_mode_ == BAY_CLOSE) ? BAY_OPEN : BAY_CLOSE;
+        shoot_cmd_send.bay_mode = (cmd_media_param.last_bay_mode_ == BAY_CLOSE) ? BAY_OPEN : BAY_CLOSE;
     else
-        last_bay_mode_ = shoot_cmd_send.bay_mode;
+        cmd_media_param.last_bay_mode_ = shoot_cmd_send.bay_mode;
 
     if (rc_data[TEMP].key[KEY_PRESS].v)
-        shoot_cmd_send.friction_mode = (last_fric_mode_ == FRICTION_OFF) ? FRICTION_ON : FRICTION_OFF;
+        shoot_cmd_send.friction_mode = (cmd_media_param.last_fric_mode_ == FRICTION_OFF) ? FRICTION_ON : FRICTION_OFF;
     else
-        last_fric_mode_ = shoot_cmd_send.friction_mode;
+        cmd_media_param.last_fric_mode_ = shoot_cmd_send.friction_mode;
 
     if (shoot_cmd_send.friction_mode == FRICTION_ON) {
         if (rc_data[TEMP].mouse.press_l)
