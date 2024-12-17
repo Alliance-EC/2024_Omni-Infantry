@@ -1,8 +1,6 @@
 #ifndef GENERAL_DEF_H
 #define GENERAL_DEF_H
 
-// 一些module的通用数值型定义,注意条件macro兼容,一些宏可能在math.h中已经定义过了
-
 #define bool  _Bool
 #define true  1
 #define false 0

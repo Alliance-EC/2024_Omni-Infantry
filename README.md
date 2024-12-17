@@ -25,19 +25,29 @@
 
 ### 下载vscode
 
-
-
-### 下载jlink驱动，ozone调试工具
-
 ### 在拓展商店安装插件
 
-C/C++，eide
+#### C/C++：
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\vscode CC++.png" alt="vscode CC++" style="zoom:90%;" />
+
+#### Embedded IDE（eide）：
+
+![vscode eide](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\vscode eide.png)
 
 ### 安装实用工具
 
-gcc，jlink
+点击侧边栏芯片图标，打开eide画面，点击下方安装实用工具
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\eide.png" alt="eide" style="zoom: 67%;" />
+
+安装**arm gnu toolchain**以及**jlink**驱动（即图中勾选的两个）：
+
+![实用工具](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\实用工具.png)
 
 ### 打开工程
+
+### 下载jlink驱动，ozone调试工具
 
 
 
