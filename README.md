@@ -27,35 +27,129 @@
 
 ### 在拓展商店安装插件
 
-#### C/C++：
+#### clangd：
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\vscode CC++.png" alt="vscode CC++" style="zoom:90%;" />
+![image-20241218053538138](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218053538138.png)
+
+安装后右下角会弹出下载clangd的信息提示，直接install；
 
 #### Embedded IDE（eide）：
 
-![vscode eide](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\vscode eide.png)
+![image-20241218053652983](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218053652983.png)
 
 ### 安装实用工具
 
-点击侧边栏芯片图标，打开eide画面，点击下方安装实用工具
+点击侧边栏芯片图标，打开eide界面，点击下方安装实用工具：
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\eide.png" alt="eide" style="zoom: 67%;" />
+![eide](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\eide.png)
 
-安装**arm gnu toolchain**以及**jlink**驱动（即图中勾选的两个）：
+安装**arm gnu toolchain**以及**jlink**驱动：
 
-![实用工具](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\实用工具.png)
+![屏幕截图 2024-12-18 032813](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\屏幕截图 2024-12-18 032813.png)
+
+同样会在右下角弹出安装提示，全部安装后工具栏应当如下图所示（可以看到gnu toolchain 和jlink后打了勾）；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\实用工具.png" alt="实用工具" style="zoom:67%;" />
+
+打开toolpack文件夹，点击arm-gnu-toolchain安装程序
+
+![toolpack](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\toolpack.png)
+
+打开安装引导后一路next，但需要复制这里的安装目录：
+
+![image-20241218054410482](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218054410482.png)
+
+完成安装后回到vscode，打开eide插件设置；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\插件设置.png" alt="插件设置" style="zoom:67%;" />
+
+在GCC安装目录下粘贴刚才复制的arm gnu toolchain安装路径；
+
+![gcc安装目录](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\gcc安装目录.png)
 
 ### 打开工程
 
+打开工程文件夹2024_Omni-Infantry，在文件夹中找到basic_framework工作区源文件；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\basic_framework.png" alt="basic_framework" style="zoom:67%;" />
+
+直接双击这个文件，vscode会自动识别这个eide工程，并跳转至工作区；
+
+一切顺利的话现在就可以正常构建代码了。
+
+![workspace](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\workspace.png)
+
+### 构建
+
+可以看到右上角有三个图标（常用），从左到右是构建、清理、烧录。
+
+![image-20241218060023833](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218060023833.png)
+
+点击构建后终端会输出编译、汇编以及链接的全部过程，最终会输出单片机可以识别的hex文件以及其他二进制文件。
+
+构建完成：
+
+![构建](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\构建.png)
+
 ### 下载jlink驱动，ozone调试工具
 
+打开toolpack文件夹，安装剩余两个工具：
 
+![jlink&ozone](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\jlink&ozone.png)
+
+#### jlink
+
+同样需要复制此处的安装目录。
+
+<img src="C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218060721803.png" alt="image-20241218060721803" style="zoom:80%;" />
+
+打开vscode，打开eide插件设置，找到jlink安装目录，粘贴复制的路径，在最后添加`\jlink`；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\jlink目录.png" alt="jlink目录" style="zoom: 67%;" />
+
+#### ozone
+
+<img src="C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218060825948.png" alt="image-20241218060825948" style="zoom:80%;" />
+
+### 烧录
+
+可以直接使用上文提到的eide工具进行烧录，烧录完成后重新给板子上电即可运行代码。
+
+#### ozone调试工具
+
+打开搜索栏搜索ozone并打开；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\ozone调试.png" alt="ozone调试" style="zoom:75%;" />
+
+Create New Project；
+
+![create](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\create.png)
+
+选择C板对应的芯片STM32F407IG；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\f4.png" alt="f4" style="zoom: 67%;" />
+
+选择swd作为烧录方式；
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\swd.png" alt="swd" style="zoom:75%;" />
+
+ozone只能打开elf文件，elf文件与hex、bin等二进制文件都是可执行文件，存放在工程目录下build文件下的debug文件夹中。
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\debug.png" alt="debug" style="zoom:67%;" />
+
+<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\debug file.png" alt="debug file" style="zoom:75%;" />
+
+ozone调试画面；
+
+<img src="C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218063738706.png" alt="image-20241218063738706" style="zoom:80%;" />
 
 ## 遥控使用说明
 
 ### dt7-dr16遥控系统
 
-- 拨杆双下无力
+#### 拨杆：
+
+- **拨杆双下无力**
 - 仅有一侧拨杆拨中时为默认全向移动模式
 - 由双下拨至双中后可以模式切换，左拨杆控制发射，右拨杆控制底盘
 - 当由双中切换回双下时，先将左侧拨轮拨下更安全
@@ -77,10 +171,21 @@
 - 拨杆由中拨至下再拨回中，底盘切换至小陀螺模式
 - 重复上述动作关闭此模式
 
-遥控器还有左侧拨轮未使用，可进行其他功能拓展。
+#### 拨轮：
 
+向上拨动控制弹仓盖的开关。
+
+#### 摇杆：
+
+左侧控制云台的两自由度运动：水平方向为YAW轴，竖直方向为PITCH轴；
+
+右侧控制底盘平移（以云台方向为正方向）。
 
 ### 键鼠控制模式:
+
+**遥控器拨杆左上右下，使用时打开裁判系统选手端，使用micro-usb数据线连接电脑与遥控器，直接将拨杆由双下状态切换至左上右下即可。**
+
+#### 控制方式：
 
 W 前 A 左 S 后 D 右
 C 开启/关闭小陀螺
