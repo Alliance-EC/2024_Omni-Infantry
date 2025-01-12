@@ -9,6 +9,7 @@
  *
  */
 #pragma once // 可以用#pragma once代替#ifndef ROBOT_DEF_H(header guard)
+#include "sys/_intsup.h"
 #ifndef ROBOT_DEF_H
 #define ROBOT_DEF_H
 
@@ -22,7 +23,7 @@
 /* 机器人重要参数定义,注意根据不同机器人进行修改,浮点数需要以.0或f结尾,无符号以u结尾 */
 
 // 云台参数
-#define YAW_CHASSIS_ALIGN_ECD     2331 // 云台和底盘对齐指向相同方向时的电机编码器值,若对云台有机械改动需要修改
+#define YAW_CHASSIS_ALIGN_ECD     1697 // 云台和底盘对齐指向相同方向时的电机编码器值,若对云台有机械改动需要修改
 #define YAW_ECD_GREATER_THAN_4096 0    // ALIGN_ECD值是否大于4096,是为1,否为0;用于计算云台偏转角度
 
 #define YAW_ALIGN_ANGLE           (YAW_CHASSIS_ALIGN_ECD * ECD_ANGLE_COEF_DJI) // 对齐时的角度,0-360
@@ -119,11 +120,10 @@ typedef struct
     uint8_t level;                   // 机器人等级
     uint16_t power_limit;            // 底盘功率限制
     uint8_t SuperCap_flag_from_user; // 超电的标志位
+    int rotate_reverse_sign;
 
     float vx; // 前进方向控制量
     float vy; // 横移方向控制量
-
-    int8_t reverse_rotate_mode_;
     // float chassis_cmd_velocity_vector; // 底盘速度控制矢量 单位:m/s
 
     float gimbal_error_angle;

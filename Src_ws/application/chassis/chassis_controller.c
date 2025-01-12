@@ -161,10 +161,11 @@ void ChassisModeSet()
             chassis_media_param.wz = PIDCalculate(&chassis_media_param.chassis_follow_cotroller, offset_angle * 100, 0);
             break;
         case CHASSIS_ROTATE:
-            chassis_media_param.wz = 4000;
+            chassis_media_param.wz = 4000 * chassis_cmd_recv.rotate_reverse_sign;
+            chassis_media_param.chassis_vx *= (chassis_cmd_recv.power_limit - chassis_cmd_recv.chassis_power) / chassis_cmd_recv.power_limit;
+            chassis_media_param.chassis_vy *= (chassis_cmd_recv.power_limit - chassis_cmd_recv.chassis_power) / chassis_cmd_recv.power_limit;
             break;
-        case CHASSIS_REVERSE:
-            chassis_media_param.wz = -4000;
+
         default:
             break;
     }

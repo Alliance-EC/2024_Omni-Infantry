@@ -31,6 +31,7 @@ typedef struct {
     friction_mode_e last_fric_mode_;
     loader_mode_e last_load_mode_;
     bullet_bay_mode_e last_bay_mode_;
+    int last_reverse_sign_;
 
     uint8_t emerg_handle_log_cnt;
 } CmdInstance;

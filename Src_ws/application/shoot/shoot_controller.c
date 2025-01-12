@@ -110,7 +110,7 @@ void ShootMsgInit()
 
 void ShootParamInit()
 {
-    int16_t init_angle  = 100;
+    int16_t init_angle  = 95;
     int16_t final_angle = 0;
     servo_init_end_angle_set(bullet_bay_cover, init_angle, final_angle);
 

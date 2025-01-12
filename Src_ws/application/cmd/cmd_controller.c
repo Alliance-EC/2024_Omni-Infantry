@@ -127,8 +127,8 @@ void GimbalModeSwitch()
         cmd_media_param.pitch_control = master_fetch_data.rec_pitch;
     } else {
         if (MOUSEKEYCONTROL) {
-            cmd_media_param.yaw_control += rc_data[TEMP].mouse.x / 350.0f;
-            cmd_media_param.pitch_control += -rc_data[TEMP].mouse.y / 15500.0f;
+            cmd_media_param.yaw_control -= 0.0000080f * rc_data[TEMP].mouse.x;
+            cmd_media_param.pitch_control += 0.0000080f * rc_data[TEMP].mouse.y;
         } else if (ENTIREDISABLE) {
             // none
         } else {
@@ -212,9 +212,7 @@ static void remotecontrolset()
             cmd_media_param.last_chassis_mode_ = chassis_cmd_send.chassis_mode;
             break;
         case RC_SW_DOWN:
-            chassis_cmd_send.chassis_mode = (cmd_media_param.last_chassis_mode_ == CHASSIS_NO_FOLLOW) ? ((cmd_media_param.last_chassis_mode_ == CHASSIS_ROTATE) ? CHASSIS_REVERSE
-                                                                                                                                                                : CHASSIS_ROTATE)
-                                                                                                      : CHASSIS_NO_FOLLOW;
+            chassis_cmd_send.chassis_mode = (cmd_media_param.last_chassis_mode_ == CHASSIS_NO_FOLLOW) ? (CHASSIS_ROTATE) : CHASSIS_NO_FOLLOW;
             break;
         case RC_SW_UP:
             chassis_cmd_send.chassis_mode = (cmd_media_param.last_chassis_mode_ == CHASSIS_NO_FOLLOW) ? CHASSIS_FOLLOW_GIMBAL_YAW : CHASSIS_NO_FOLLOW;
@@ -241,10 +239,10 @@ static void remotecontrolset()
     chassis_cmd_send.vx = 40000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r_; // 水平方向
     chassis_cmd_send.vy = 40000 / 660.0f * (float)rc_data[TEMP].rc.rocker_r1; // 竖直方向
 
-    chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].rc.dial > 400 ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
-
-    gimbal_cmd_send.yaw   = cmd_media_param.yaw_control;
-    gimbal_cmd_send.pitch = cmd_media_param.pitch_control;
+    // chassis_cmd_send.SuperCap_flag_from_user = rc_data[TEMP].rc.dial > 400 ? SUPER_USER_OPEN : SUPER_USER_CLOSE;
+    chassis_cmd_send.rotate_reverse_sign = (rc_data[TEMP].rc.dial > 400) ? -1 : 1;
+    gimbal_cmd_send.yaw                  = cmd_media_param.yaw_control;
+    gimbal_cmd_send.pitch                = cmd_media_param.pitch_control;
 
     if (rc_data[TEMP].rc.dial < -400)
         shoot_cmd_send.bay_mode = (cmd_media_param.last_bay_mode_ == BAY_CLOSE) ? BAY_OPEN : BAY_CLOSE;
@@ -299,8 +297,8 @@ static void gimbalset()
 
 static void shootset()
 {
-    cmd_media_param.auto_rune = rc_data[TEMP].key[KEY_PRESS].ctrl ? 1 : 0;
-    cmd_media_param.auto_aim  = rc_data[TEMP].mouse.press_r ? 1 : 0;
+    // cmd_media_param.auto_rune = rc_data[TEMP].key[KEY_PRESS].ctrl ? 1 : 0;
+    // cmd_media_param.auto_aim  = rc_data[TEMP].mouse.press_r ? 1 : 0;
 
     if (rc_data[TEMP].key[KEY_PRESS].b)
         shoot_cmd_send.bay_mode = (cmd_media_param.last_bay_mode_ == BAY_CLOSE) ? BAY_OPEN : BAY_CLOSE;
