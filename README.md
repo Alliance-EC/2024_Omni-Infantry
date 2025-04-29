@@ -1,7 +1,6 @@
 # Omni-Infantry Up-supply
 
 
-[TOC]
 
 ## 框架设计思想
 
@@ -29,87 +28,105 @@
 
 #### clangd：
 
-![image-20241218053538138](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218053538138.png)
+![image-20241223014042003](assets/image-20241223014042003.png)
 
 安装后右下角会弹出下载clangd的信息提示，直接install；
 
 #### Embedded IDE（eide）：
 
-![image-20241218053652983](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218053652983.png)
+![image-20241223014056874](assets/image-20241223014056874.png)
+
+
 
 ### 安装实用工具
 
 点击侧边栏芯片图标，打开eide界面，点击下方安装实用工具：
 
-![eide](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\eide.png)
+![image-20241223014103307](assets/image-20241223014103307.png)
+
+
 
 安装**arm gnu toolchain**以及**jlink**驱动：
 
-![屏幕截图 2024-12-18 032813](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\屏幕截图 2024-12-18 032813.png)
+![image-20241223014113083](assets/image-20241223014113083.png)
 
 同样会在右下角弹出安装提示，全部安装后工具栏应当如下图所示（可以看到gnu toolchain 和jlink后打了勾）；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\实用工具.png" alt="实用工具" style="zoom:67%;" />
+![image-20241223014121842](assets/image-20241223014121842.png)
 
 打开toolpack文件夹，点击arm-gnu-toolchain安装程序
 
-![toolpack](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\toolpack.png)
+![image-20241223014129788](assets/image-20241223014129788.png)
 
 打开安装引导后一路next，但需要复制这里的安装目录：
 
-![image-20241218054410482](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218054410482.png)
+![image-20241223014138465](assets/image-20241223014138465.png)
 
 完成安装后回到vscode，打开eide插件设置；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\插件设置.png" alt="插件设置" style="zoom:67%;" />
+![image-20241223014149375](assets/image-20241223014149375.png)
 
 在GCC安装目录下粘贴刚才复制的arm gnu toolchain安装路径；
 
-![gcc安装目录](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\gcc安装目录.png)
+![image-20241223014200422](assets/image-20241223014200422.png)
+
+
 
 ### 打开工程
 
 打开工程文件夹2024_Omni-Infantry，在文件夹中找到basic_framework工作区源文件；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\basic_framework.png" alt="basic_framework" style="zoom:67%;" />
+![image-20241223014209470](assets/image-20241223014209470.png)
+
+
 
 直接双击这个文件，vscode会自动识别这个eide工程，并跳转至工作区；
 
 一切顺利的话现在就可以正常构建代码了。
 
-![workspace](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\workspace.png)
+![](assets/image-20241223014217035.png)
 
 ### 构建
 
 可以看到右上角有三个图标（常用），从左到右是构建、清理、烧录。
 
-![image-20241218060023833](C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218060023833.png)
+![image-20241223014227639](assets/image-20241223014227639.png)
 
 点击构建后终端会输出编译、汇编以及链接的全部过程，最终会输出单片机可以识别的hex文件以及其他二进制文件。
 
 构建完成：
 
-![构建](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\构建.png)
+![image-20241223014242831](assets/image-20241223014242831.png)
+
+
 
 ### 下载jlink驱动，ozone调试工具
 
 打开toolpack文件夹，安装剩余两个工具：
 
-![jlink&ozone](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\jlink&ozone.png)
+![image-20241223014252017](assets/image-20241223014252017.png)
+
+
 
 #### jlink
 
 同样需要复制此处的安装目录。
 
-<img src="C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218060721803.png" alt="image-20241218060721803" style="zoom:80%;" />
+![image-20241223014300045](assets/image-20241223014300045.png)
+
+
 
 打开vscode，打开eide插件设置，找到jlink安装目录，粘贴复制的路径，在最后添加`\jlink`；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\jlink目录.png" alt="jlink目录" style="zoom: 67%;" />
+![image-20241223014307268](assets/image-20241223014307268.png)
+
+
 
 #### ozone
 
-<img src="C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218060825948.png" alt="image-20241218060825948" style="zoom:80%;" />
+![image-20241223014314082](assets/image-20241223014314082.png)
+
+
 
 ### 烧录
 
@@ -119,29 +136,37 @@
 
 打开搜索栏搜索ozone并打开；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\ozone调试.png" alt="ozone调试" style="zoom:75%;" />
+![image-20241223014320540](assets/image-20241223014320540.png)
 
 Create New Project；
 
-![create](D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\create.png)
+![image-20241223014332930](assets/image-20241223014332930.png)
+
+
 
 选择C板对应的芯片STM32F407IG；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\f4.png" alt="f4" style="zoom: 67%;" />
+![image-20241223014339303](assets/image-20241223014339303.png)
 
 选择swd作为烧录方式；
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\swd.png" alt="swd" style="zoom:75%;" />
+![image-20241223014348078](assets/image-20241223014348078.png)
+
+
 
 ozone只能打开elf文件，elf文件与hex、bin等二进制文件都是可执行文件，存放在工程目录下build文件下的debug文件夹中。
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\debug.png" alt="debug" style="zoom:67%;" />
+![image-20241223014354947](assets/image-20241223014354947.png)
 
-<img src="D:\alliance\electric_control\Alliance-EC2024\2024_Omni-Infantry\.assets\debug file.png" alt="debug file" style="zoom:75%;" />
+![image-20241223014406503](assets/image-20241223014406503.png)
+
+
 
 ozone调试画面；
 
-<img src="C:\Users\1\AppData\Roaming\Typora\typora-user-images\image-20241218063738706.png" alt="image-20241218063738706" style="zoom:80%;" />
+![image-20241223014413299](assets/image-20241223014413299.png)
+
+s
 
 ## 遥控使用说明
 
@@ -152,7 +177,7 @@ ozone调试画面；
 - **拨杆双下无力**
 - 仅有一侧拨杆拨中时为默认全向移动模式
 - 由双下拨至双中后可以模式切换，左拨杆控制发射，右拨杆控制底盘
-- 当由双中切换回双下时，先将左侧拨轮拨下更安全
+- 当由双中切换回双下时，先将左侧拨杆拨下更安全
 
 双中状态下：
 
@@ -260,4 +285,5 @@ v_3=-v_{xcmd}*cos\theta-v_{ycmd}*sin\theta+-v_y+w_z*R\\
 v_4=-v_{xcmd}*cos\theta-v_{ycmd}*sin\theta+v_y+w_z*R\\
 $$
 
-### 
+## 发射机构
+规则限制了发射机构热量，代码中的shoot_controller.c中存在热量控制部分，实现原理为读取摩擦轮转速并做导数处理，比较尖峰来判断是否发弹并记录及本地热量，若热量接近上限则停转拨弹盘，实现本地热量管理。
